@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem 'algorithms', '~> 0.6.1'
+gem 'pry'
+gem 'rspec'
