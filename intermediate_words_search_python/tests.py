@@ -5,22 +5,22 @@ from time  import time
 
 
 TEST_CASES = (
-  # start word, target word, minimal path length
-  ( 'cat',       'dog',      4    ),
-  ( 'cat',       'mistrial', 9    ),
-  ( 'strong',    'weak',     7    ),
-  ( 'hot',       'cold',     4    ),
-  ( 'up',        'down',     5    ),
-  ( 'left',      'right',    7    ),
-  ( 'light',     'heavy',    10   ),
-  ( 'computer',  'virus',    12   ),
-  ( 'strike',    'freeze',   6    ),
-  ( 'fan',       'for',      3    ),
-  ( 'duck',      'dusty',    4    ),
-  ( 'rue',       'be',       3    ),
-  ( 'rue',       'defuse',   5    ),
-  ( 'rue',       'bend',     5    ),
-  ( 'zoologist', 'zoology',  None )  # no path; these two words are disjoint
+    # start word, target word, minimal path length
+    ( 'cat',       'dog',      4    ),
+    ( 'cat',       'mistrial', 9    ),
+    ( 'strong',    'weak',     7    ),
+    ( 'hot',       'cold',     4    ),
+    ( 'up',        'down',     5    ),
+    ( 'left',      'right',    7    ),
+    ( 'light',     'heavy',    10   ),
+    ( 'computer',  'virus',    12   ),
+    ( 'strike',    'freeze',   6    ),
+    ( 'fan',       'for',      3    ),
+    ( 'duck',      'dusty',    4    ),
+    ( 'rue',       'be',       3    ),
+    ( 'rue',       'defuse',   5    ),
+    ( 'rue',       'bend',     5    ),
+    ( 'zoologist', 'zoology',  None )  # no path; these two words are disjoint
 )
 
 
