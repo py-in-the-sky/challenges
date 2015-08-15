@@ -1,6 +1,39 @@
 # imports from solution
-from main  import solution
+from main  import solution, LOCAL_DICTIONARY
 from utils import show_path
+from time  import time
+
+
+TEST_CASES = (
+  # start word, target word, minimal path length
+  ( 'cat',       'dog',      4    ),
+  ( 'cat',       'mistrial', 9    ),
+  ( 'strong',    'weak',     7    ),
+  ( 'hot',       'cold',     4    ),
+  ( 'up',        'down',     5    ),
+  ( 'left',      'right',    7    ),
+  ( 'light',     'heavy',    10   ),
+  ( 'computer',  'virus',    12   ),
+  ( 'strike',    'freeze',   6    ),
+  ( 'fan',       'for',      3    ),
+  ( 'duck',      'dusty',    4    ),
+  ( 'rue',       'be',       3    ),
+  ( 'rue',       'defuse',   5    ),
+  ( 'rue',       'bend',     5    ),
+  ( 'zoologist', 'zoology',  None )  # no path; these two words are disjoint
+)
+
+
+def tests2():
+    t0 = time()
+    opts = { 'search_method': 'A*', 'dictionary_filename': LOCAL_DICTIONARY }
+
+    for start_word,target_word,path_len in TEST_CASES:
+        path = solution(start_word, target_word, opts)
+        assert (len(path) if path else None) == path_len
+
+    return 'tests pass in {} seconds!'.format(time() - t0)
+
 
 
 def tests():
@@ -35,4 +68,5 @@ def tests():
 
 
 if __name__ == '__main__':
-    print tests()
+    # print tests()
+    print tests2()
