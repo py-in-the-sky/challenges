@@ -4,8 +4,8 @@ Greedy Algorithm
 https://community.topcoder.com/stat?c=problem_statement&pm=1957&rd=4650
 Discussion: https://www.topcoder.com/community/data-science/data-science-tutorials/greedy-is-good/
 
-"[T]he profit of allocating an extra worker to a mine is always higher or equal
-with the profit of allocating the next extra worker to that mine."  That is,
+"[T]he [expected] profit of allocating an extra worker to a mine is always higher or equal
+with the [expected] profit of allocating the next extra worker to that mine."  That is,
 for each mine, the profit from allocating an additional miner is a non-increasing
 sequence; the profit you'll get from adding this miner is greater than or
 equal to the profit from allocating the next.
