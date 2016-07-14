@@ -8,7 +8,7 @@ The tests under `tests.py` (run `python tests.py`) are somewhat interesting.  Th
 
 The solution uses [A* search](https://en.wikipedia.org/wiki/A*_search_algorithm), which is like [BFS](https://en.wikipedia.org/wiki/Breadth-first_search) and [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) with one key difference: it uses a problem-specific heuristic function to nudge the search algorithm in the direction of the target destination (in this case to help nudge the searcher along the right set of words from the start word to the target word in the dictionary).
 
-Here's a [visualization](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif) of A* in action on another problem.
+Here's a [visualization](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif) of A* in action on another problem.  And here's a [visualization](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#/media/File:Dijkstras_progress_animation.gif) of Dijkstra's algorithm on the same or a similar problem.
 
 You can see this performance difference play out in the results from `benchmarking.py`: BFS enqueues and searches many words before finding the target word whereas A* makes almost a direct path towards the target word.
 
