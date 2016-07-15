@@ -1,3 +1,8 @@
+# input and output files for Google Code Jam
+*.in
+*.out
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
