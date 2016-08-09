@@ -2,6 +2,8 @@
 https://www.hackerrank.com/contests/booking-passions-hacked-backend/challenges/good-memories/submissions/code/6536390
 
 Problem reduction: do all friends' sequences form a directed acyclic graph (DAG)?
+
+Runtime: O(V + E)
 """
 
 
@@ -28,19 +30,11 @@ def is_dag(graph, n_nodes):
 
         visited[node] = GREY
         next_nodes = graph.get(node)
-        if next_nodes:
-            has_back_edge = any(_has_back_edge(node2) for node2 in next_nodes)
-            visited[node] = BLACK
-            return has_back_edge
-        else:
-            visited[node] = BLACK
-            return False
+        has_back_edge = any(_has_back_edge(node2) for node2 in next_nodes) if next_nodes else False
+        visited[node] = BLACK
+        return has_back_edge
 
-    for node in graph:
-        if _has_back_edge(node):
-            return False
-
-    return True
+    return not any(_has_back_edge(node) for node in graph)
 
 
 def create_graph(sequences):
