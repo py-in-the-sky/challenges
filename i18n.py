@@ -28,6 +28,22 @@ def condense(word):
     return [first + mid + last for mid in _condense(rest)]
 
 
+def memo(f):
+    """memoization decorator, taken from Peter Norvig's Design of Computer
+    Programs course on Udacity.com"""
+    cache = {}
+    def _f(*args):
+        try:
+            return cache[args]
+        except KeyError:
+            result = cache[args] = f(*args)
+            return result
+        except TypeError:  # unhashable argument
+            return f(*args)
+    return _f
+
+
+@memo
 def _condense(word):
     if not word:
         return ['']
@@ -44,8 +60,7 @@ def _condense(word):
 def tests():
     assert condense('zzz') == ['zzz']
     assert sorted(condense('zaaaz')) == sorted(['z3z', 'za2z', 'z1a1z', 'z2az', 'zaa1z', 'za1az', 'z1aaz', 'zaaaz'])
-    # assert 'inter3ion2iza3n' in condense('internationalization')
-    # commented out test passes but is long-running
+    assert 'inter3ion2iza3n' in condense('internationalization')
 
     print 'tests pass!'
 
