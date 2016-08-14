@@ -37,6 +37,37 @@ def is_dag(graph, n_nodes):
     return not any(_has_back_edge(node) for node in graph)
 
 
+def is_dag_alt(graph, n_nodes):
+    "Explicitly manage stack, rather than rely on recursion."
+    WHITE, GREY, BLACK = 0, 1, 2
+    visited = [WHITE for _ in xrange(n_nodes)]
+
+    def _has_back_edge(node):
+        if visited[node] is BLACK:
+            return False
+
+        stack = [node]
+
+        while stack:
+            node = stack.pop()
+            color = visited[node]
+            if color is GREY:
+                visited[node] = BLACK
+            elif color is WHITE:
+                visited[node] = GREY
+                stack.append(node)
+                for node2 in graph.get(node, ()):
+                    color2 = visited[node2]
+                    if color2 is GREY:
+                        return True
+                    elif color2 is WHITE:
+                        stack.append(node2)
+
+        return False
+
+    return not any(_has_back_edge(node) for node in graph)
+
+
 def create_graph(sequences):
     places = big_union(sequences)
     n_places = len(places)
@@ -52,7 +83,8 @@ def create_graph(sequences):
 
 def solve(sequences):
     graph, n_nodes = create_graph(sequences)
-    return is_dag(graph, n_nodes)
+    # return is_dag(graph, n_nodes)
+    return is_dag_alt(graph, n_nodes)
 
 
 def parse_sequence(line):
