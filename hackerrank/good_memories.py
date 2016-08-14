@@ -41,6 +41,12 @@ def is_dag_alt(graph, n_nodes):
     "Explicitly manage stack, rather than rely on recursion."
     WHITE, GREY, BLACK = 0, 1, 2
     visited = [WHITE for _ in xrange(n_nodes)]
+    # WHITE means you've never been popped off the stack before.
+    # GREY means we're doing DFS from you right now.
+    # BLACK means we've completed exhaustive DFS from you.
+
+    # Therefore, it we run into a GREY node while adding nodes to
+    # the stack in our DFS, that means there's a cycle.
 
     def _has_back_edge(node):
         if visited[node] is BLACK:
