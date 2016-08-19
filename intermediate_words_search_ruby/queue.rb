@@ -18,7 +18,7 @@ class Queue
     @front.value
   end
 
-  def insert(value)
+  def push(value)
     new_node = Node.new(value)
 
     if empty?

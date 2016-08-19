@@ -1,6 +1,7 @@
 require_relative 'main'
 require_relative 'spec'  # TEST_CASES
-require 'algorithms'  # use `Containers::Queue` and `Containers::PriorityQueue`
+require_relative 'heap'
+require_relative 'queue'
 require 'benchmark'
 
 
@@ -32,7 +33,7 @@ class Benchmarker < Solver
 
   def a_star_searcher
     opts = {
-      queue: QueueStatsWrapper.new(Containers::PriorityQueue.new),
+      queue: QueueStatsWrapper.new(Heap.new),
       search_helper: word_search_helper
     }
     AStarSearcher.new(opts)
@@ -40,7 +41,7 @@ class Benchmarker < Solver
 
   def bf_searcher
     opts = {
-      queue: QueueStatsWrapper.new(Containers::Queue.new),
+      queue: QueueStatsWrapper.new(Queue.new),
       search_helper: word_search_helper
     }
     BreadthFirstSearcher.new(opts)

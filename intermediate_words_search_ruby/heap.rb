@@ -17,7 +17,7 @@ class Heap
     @array[0]
   end
 
-  def insert(item)
+  def push(item)
     # Append item to end and then reestablish the parent-child ordering in the
     # heap before exiting.
     @array << item
@@ -102,8 +102,8 @@ def tests
   h2 = Heap.new(min_top: false)
 
   a.each do |n|
-    h1.insert(n)
-    h2.insert(n)
+    h1.push(n)
+    h2.push(n)
   end
 
   until h1.empty?
