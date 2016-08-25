@@ -1,5 +1,23 @@
-require_relative 'main'
 require 'rspec'
+
+require_relative 'utilities'
+
+
+class Solver
+  include Utilities
+
+  attr_reader :dictionary_filename, :search_method
+
+  def initialize(dictionary_filename: '/usr/share/dict/words', search_method: 'BFS')
+    @dictionary_filename = dictionary_filename
+    @search_method = search_method
+  end
+
+  def solve(start_word, target_word)
+    graph_searcher = make_graph_searcher(word_search_helper, search_method)
+    graph_searcher.find_minimal_path(start_word, target_word)
+  end
+end
 
 
 TEST_CASES = [

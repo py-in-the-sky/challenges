@@ -5,8 +5,7 @@
 #  - its length is > 1
 class Queue
   def initialize
-    @front = nil
-    @back = nil
+    @front = @back = nil
   end
 
   def empty?
@@ -22,11 +21,9 @@ class Queue
     new_node = Node.new(value)
 
     if empty?
-      @front = new_node
-      @back = new_node
+      @front = @back = new_node
     else
-      @back.child = new_node
-      @back = new_node
+      @back = @back.child = new_node
     end
 
     nil
@@ -38,8 +35,7 @@ class Queue
     old_top = top
 
     if @front == @back  # length == 1
-      @front = nil
-      @back = nil
+      @front = @back = nil
     else  # length > 1
       @front = @front.child
     end
