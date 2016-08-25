@@ -32,7 +32,7 @@ class WordSearchHelper
   def neighbors_by_addition(word)
     word_partitions_with_trie(word).flat_map do |prefix, suffix, trie_under_prefix|
       trie_under_prefix
-        .entries
+        .entries  # characters
         .select { |_, trie_under_char| trie_under_char.include?(suffix) }
         .map { |char, _| prefix + char + suffix }
     end

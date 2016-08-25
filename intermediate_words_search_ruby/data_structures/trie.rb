@@ -32,7 +32,9 @@ class Trie
   end
 
   def entries
-    @tree.reject { |char, _| char == WordEndToken }
+    @tree
+      .reject { |char, _| char == WordEndToken }
+      .map { |char, tree| [char, self.class.new(tree)]}
   end
 
   def has_key?(key)
