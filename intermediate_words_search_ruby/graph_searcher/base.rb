@@ -21,16 +21,16 @@ module GraphSearcher
       queue.push(make_start_state(start_node))
 
       until queue.empty?
-        path = extract_path(queue.pop)
-        current_node = path.last
+        search_state = queue.pop
+        current_node = search_state.current_node
 
-        return path if current_node == target_node
+        return search_state.path if current_node == target_node
 
         unless visited_nodes.include?(current_node)  # unless already visited...
           visited_nodes.add(current_node)
           neighboring_nodes(current_node).each do |neighbor_node|
             unless visited_nodes.include?(neighbor_node)
-              queue.push(make_queue_entry(path, neighbor_node, target_node))
+              queue.push(make_next_state(search_state, neighbor_node, target_node))
             end
           end
         end
