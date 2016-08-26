@@ -75,7 +75,8 @@ class Heap
   def parent_child_ordering?(parent_idx, child_idx)
     fail unless parent_idx < child_idx && child_idx < @array.length
     p, c = @array[parent_idx], @array[child_idx]
-    @min_top ? p <= c : p >= c
+    comp = p <=> c
+    @min_top ? comp <= 0 : comp >= 0
   end
 
   def target_child_index(idx)
@@ -86,9 +87,11 @@ class Heap
     elsif j >= @array.length
       i
     elsif @min_top  # return index of smallest child
-      @array[i] <= @array[j] ? i : j
+      comp = @array[i] <=> @array[j]
+      comp <= 0 ? i : j
     else  # return index of largest child
-      @array[i] <= @array[j] ? j : i
+      comp = @array[i] <=> @array[j]
+      comp <= 0 ? j : i
     end
   end
 end

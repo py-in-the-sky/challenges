@@ -41,6 +41,7 @@ TEST_CASES = [
 
 
 solver = Solver.new
+# solver = Solver.new(search_method: 'A*')
 
 
 RSpec.describe 'solver' do

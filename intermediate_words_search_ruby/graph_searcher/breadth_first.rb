@@ -23,5 +23,9 @@ module GraphSearcher
     def make_queue_entry(path, next_node, _)
       path + [ next_node ]
     end
+
+    def extract_path(path)
+      path
+    end
   end
 end

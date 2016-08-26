@@ -21,7 +21,7 @@ module GraphSearcher
       queue.push(make_start_state(start_node))
 
       until queue.empty?
-        path = queue.pop
+        path = extract_path(queue.pop)
         current_node = path.last
 
         return path if current_node == target_node
