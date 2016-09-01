@@ -22,7 +22,7 @@ def is_dag(graph, n_nodes):
     WHITE, GREY, BLACK = 0, 1, 2
     visited = [WHITE for _ in xrange(n_nodes)]
 
-    def _has_back_edge(node):
+    def _leads_to_cycle(node):
         if visited[node] == BLACK:
             return False
         elif visited[node] == GREY:
@@ -30,11 +30,11 @@ def is_dag(graph, n_nodes):
 
         visited[node] = GREY
         next_nodes = graph.get(node)
-        has_back_edge = any(_has_back_edge(node2) for node2 in next_nodes) if next_nodes else False
+        leads_to_cycle = any(_leads_to_cycle(node2) for node2 in next_nodes) if next_nodes else False
         visited[node] = BLACK
-        return has_back_edge
+        return leads_to_cycle
 
-    return not any(_has_back_edge(node) for node in graph)
+    return not any(_leads_to_cycle(node) for node in graph)
 
 
 def is_dag_alt(graph, n_nodes):
@@ -48,7 +48,7 @@ def is_dag_alt(graph, n_nodes):
     # Therefore, it we run into a GREY node while adding nodes to
     # the stack in our DFS, that means there's a cycle.
 
-    def _has_back_edge(node):
+    def _leads_to_cycle(node):
         if visited[node] is BLACK:
             return False
 
@@ -71,7 +71,9 @@ def is_dag_alt(graph, n_nodes):
 
         return False
 
-    return not any(_has_back_edge(node) for node in graph)
+    # Iterate over all nodes; use DFS as a subroutine to determine whether
+    # a cycle exists downstream from a node.
+    return not any(_leads_to_cycle(node) for node in graph)
 
 
 def create_graph(sequences):
