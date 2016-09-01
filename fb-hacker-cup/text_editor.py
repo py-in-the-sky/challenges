@@ -1,5 +1,6 @@
 """
 https://www.facebook.com/hackercup/problem/1525154397757404/
+https://www.facebook.com/notes/1264355396913692
 
 Moves
     Append letter to end
