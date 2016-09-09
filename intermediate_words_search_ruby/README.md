@@ -4,6 +4,7 @@
 * Design of Computer Programs [Lesson 4](https://classroom.udacity.com/courses/cs212/lessons/48532737/concepts/487212950923#)
 * [Artificial Intelligence: A Modern Approach](http://aima.cs.berkeley.edu/)
 
+#### Preliminaries
 
 This is a solution to the problem described in the first paragraph of [this Quora discussion](http://www.quora.com/What-is-the-importance-of-this-algorithm).  I recommend viewing it in Firefox; for some reason, viewing the discussion in Firefox hides all mention of a solution under a "read more" link; I just found that this is not the case in some other browsers, at least on my computer.
 
