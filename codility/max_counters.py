@@ -25,9 +25,11 @@ O(P) work.  (`counts.clear()` also take O(P) work.)
 
 
 Why not just keep an N-sized array of counters throughout?  Because
-each time you come across the MAX operation, you'd have to do O(N) work.
-If all M items in A (or, say, every other) indicate the MAX operation,
-then the algorithm would run in O(M*N) time.
+each time you come across the MAX operation, you'd have to do O(N) work:
+getting the max from the counters and then setting all the counters
+to the max are both O(N) operations.  If all M items in A (or, say,
+every other or every third) indicate the MAX operation, then the algorithm
+would run in Theta(M*N) time.
 """
 
 
