@@ -1,5 +1,10 @@
 """
 https://codility.com/programmers/task/min_avg_two_slice/
+
+A slice is a sequence of contiguous elements..  We track `best_ending_at` along
+the way and take the overall best one to be `best`.  For each index i of A, 
+`best_ending_at` is the slice that has the smallest average of all slices that
+end at i.  
 """
 
 
