@@ -1,25 +1,23 @@
 // https://codility.com/programmers/lessons/17-dynamic_programming/number_solitaire/
 
 
-import java.util.*;
-
-
 class Solution {
     public int solution(int[] A) {
-        HashMap<Integer, Integer> memo = new HashMap<Integer, Integer>();
-        memo.put(A.length - 1, A[A.length - 1]);
+        int N = A.length;
+        int[] memo = new int[N];
+        memo[N - 1] = A[N - 1];
         
-        for (int i = A.length - 2; i >= 0; i--) {
-            int max_from_i = memo.get(i + 1);
+        for (int i = N - 2; i >= 0; i--) {
+            int max_i = memo[i + 1];
             
-            for (int j = i + 2; j < A.length && j <= i + 6; j++) {
-                int max_from_j = memo.get(j);
-                max_from_i = max_from_j > max_from_i ? max_from_j : max_from_i;
+            for (int j = i + 2; j < N && j <= i + 6; j++) {
+                int max_j = memo[j];
+                max_i = max_j > max_i ? max_j : max_i;
             }
             
-            memo.put(i, max_from_i + A[i]);
+            memo[i] = max_i + A[i];
         }
         
-        return memo.get(0);
+        return memo[0];
     }
 }
