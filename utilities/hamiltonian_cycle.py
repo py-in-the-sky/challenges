@@ -39,6 +39,9 @@ def hamiltonian_cycle(graph, N):
     just the start node and then building out from there to larger node sets that
     are connected to the start node and that form a Hamiltonian path.
     """
+    if N <= 1:
+        return True
+
     paths = defaultdict(bool)
     paths[1 << 0] = True
 
