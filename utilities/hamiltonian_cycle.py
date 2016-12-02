@@ -42,8 +42,8 @@ def hamiltonian_cycle(graph, N):
     if N <= 1:
         return True
 
-    paths = defaultdict(bool)
-    paths[1 << 0] = True
+    hamiltonian_paths = defaultdict(dict)
+    hamiltonian_paths[1 << 0][0] = (0,)
 
     for s in node_sets(N):
         for n in (n for n in active_bits(s) if n != 0):
@@ -52,18 +52,18 @@ def hamiltonian_cycle(graph, N):
             # for the start node, from the proposed set. If the smaller set
             # forms a Hamiltonian path and has an edge to the removed node, then
             # the proposed set also forms a Hamiltonian path.
-            if paths[s2]:
-                for n2 in active_bits(s2):
-                    if n in graph[n2]:
-                        paths[s] = True
-                        if s == (2**N - 1) and 0 in graph[n]:
-                            # All nodes in the graph have formed a Hamiltonian
-                            # path, and the last node added to the path has an
-                            # edge to the start node, thus forming a Hamiltonian
-                            # cycle, using all the graph's nodes.
-                            return True
+            for end_point,path in hamiltonian_paths[s2].items():
+                if end_point in graph and n in graph[end_point]:
+                    hamiltonian_paths[s][n] = path + (n,)
 
-    return False
+    # 2**N - 1 is the node set that contains all nodes of the graph.
+    # Each Hamiltonian path in hamiltonian_paths[2**N - 1] whose endpoint
+    # has an edge to 0 forms a Hamiltonian cycle.
+    cycles = (path + (0,)
+              for path in hamiltonian_paths[2**N - 1].values()
+              if 0 in graph[path[-1]])
+
+    return tuple(cycles)
 
 
 def tests():
@@ -75,7 +75,9 @@ def tests():
         4: {1, 2, 3}
     }
 
-    assert hamiltonian_cycle(graph, 5)
+    cycles = hamiltonian_cycle(graph, 5)
+    assert cycles
+    assert (0, 2, 3, 4, 1, 0) in cycles
 
     graph = {
         0: {1},
@@ -85,7 +87,15 @@ def tests():
 
     assert not hamiltonian_cycle(graph, 3)
 
-    print('tests done!')
+    graph = {
+        0: {1},
+        1: {2, 3},
+        2: {0},
+    }
+
+    assert not hamiltonian_cycle(graph, 4)
+
+    print('tests pass!')
 
 
 if __name__ == '__main__':
