@@ -26,10 +26,9 @@ def active_bits(n):
 
 def hamiltonian_cycle(graph, N):
     """
-    Predicate. True if the graph consitutes a Hamiltonian cycle -- that is, if
-    you can start at a node, visit all nodes in the graph, and end at the start
-    node, such that all nodes are visited once (the start node will be visited
-    twice).
+    Returns all Hamiltonian cycles in the graph. A Hamiltonian cycle starts at a node,
+    visits all nodes in the graph, and ends at the start node, such that all nodes are
+    visited once (the start node will be visited twice).
 
     All N nodes must be represented by the integers [0, N).
 
@@ -40,7 +39,7 @@ def hamiltonian_cycle(graph, N):
     are connected to the start node and that form a Hamiltonian path.
     """
     if N <= 1:
-        return True
+        return tuple(graph.keys())
 
     hamiltonian_paths = defaultdict(dict)
     hamiltonian_paths[1 << 0][0] = (0,)
