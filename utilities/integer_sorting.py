@@ -65,6 +65,19 @@ def radix_sort(A, ordered_keys):
     return reduce(_bucket_sort, reversed(range(L)), A)
 
 
+def radix_sort_int(A, wordsize):
+    assert wordsize in (16, 32, 64)
+    if not A:
+        return []
+
+    def _bucket_sort(A, i):
+        return bucket_sort(A, (False, True), key=lambda n: (n & (1 << i)) > 0)
+
+    limit = 2**wordsize
+    assert all(n < limit for n in A)
+    return reduce(_bucket_sort, range(wordsize), A)
+
+
 def tests():
     from string import ascii_lowercase
 
@@ -75,5 +88,7 @@ def tests():
     assert bucket_sort([2, 4, -4, 4, 19, -18, -1, 1], range(20), key=abs) == [-1, 1, 2, 4, -4, 4, -18, 19]
 
     assert radix_sort(['asdf', 'asde', 'aadz'], ascii_lowercase) == ['aadz', 'asde', 'asdf']
+    
+    assert radix_sort_int([6, 25000, 1, 2], 16) == [1, 2, 6, 25000]
 
     print('tests pass!')
