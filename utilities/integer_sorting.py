@@ -68,7 +68,7 @@ def radix_sort(A, ordered_keys):
 def tests():
     from string import ascii_lowercase
 
-    assert counting_sort([1, 0, 19, 18, 17, 5], range(20)) == [0, 1, 5, 17, 18, 19]
+    assert counting_sort([1, 0, 19, 18, 17, 5, 1], range(20)) == [0, 1, 1, 5, 17, 18, 19]
     assert counting_sort('poiawesaf', ascii_lowercase) == ['a', 'a', 'e', 'f', 'i', 'o', 'p', 's', 'w']
 
     assert bucket_sort([2, 4, -4, 4, 19, -18, -1, 1], range(-19, 20)) == [-18, -4, -1, 1, 2, 4, 4, 19]
