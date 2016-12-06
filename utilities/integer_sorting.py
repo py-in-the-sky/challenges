@@ -74,7 +74,7 @@ def radix_sort_int(A, wordsize):
         return bucket_sort(A, (False, True), key=lambda n: (n & (1 << i)) > 0)
 
     limit = 2**wordsize
-    assert all(n < limit for n in A)
+    assert all(0 <= n < limit for n in A)
     return reduce(_bucket_sort, range(wordsize), A)
 
 
