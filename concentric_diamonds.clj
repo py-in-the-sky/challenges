@@ -3,12 +3,10 @@
 
 
 (defn row [total-height level]
-  (let [buffer-width level
-        middle-width (- total-height (* 2 buffer-width))
-        left-buffer  (take buffer-width spaces)
-        middle       (take middle-width (interleave hashes spaces))
-        right-buffer left-buffer]
-    (apply str (concat left-buffer middle right-buffer))))
+  (let [buffer (take level spaces)
+        middle-width (- total-height (* 2 level))
+        middle (take middle-width (interleave hashes spaces))]
+    (apply str (concat buffer middle buffer))))
 
 
 (defn print-diamonds [n-diamonds]
