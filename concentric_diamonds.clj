@@ -11,22 +11,20 @@
     (apply str (concat left-buffer middle right-buffer))))
 
 
-(defn print-diamonds-helper [level row-fn]
-  (let [row-string (row-fn level)]
-    (println row-string)
-    (when (> level 0)
-      (print-diamonds-helper (dec level) row-fn)
-      (println row-string))))
-
-
 (defn print-diamonds [n-diamonds]
   (let [half-height  (* 2 n-diamonds)
-        total-height (+ (* 2 half-height) 1)]
+        total-height (+ (* 2 half-height) 1)
+        printer (fn printer [level]
+                  (let [row-string (row total-height level)]
+                    (println row-string)
+                    (when (> level 0)
+                      (printer (dec level))
+                      (println row-string))))]
     ;; half-height is half the height of the outermost diamond.
     ;; There is a space between each concentric diamond. Hence half-height is
     ;; 2 * n-diamonds instead of just n-diamonds.
     ;; total-height is also the total width (height and width of a diamond are equal).
-    (print-diamonds-helper half-height #(row total-height %))))
+    (printer half-height)))
 
 
 (println)
