@@ -1,33 +1,11 @@
 """
 https://code.google.com/codejam/contest/635101/dashboard#s=p1
+
+This is an example of a GREEDY ALGORITHM. The input data is transformed
+into end_locations and operated on in one simple pass. Although this is
+a greedy algorithm, the problem statement isn't (or doesn't seem to be)
+amenable to reduction to a matroid (as opposed to Kruskal's MST solution).
 """
-
-
-def merge_sort_count_inversions(A):
-    if len(A) <= 1:
-        return 0, A
-
-    b_inversions, B = merge_sort_count_inversions(A[:len(A) / 2])
-    c_inversions, C = merge_sort_count_inversions(A[len(A) / 2:])
-    inversions = b_inversions + c_inversions
-    b, c = 0, 0
-    A = []
-
-    while b < len(B) and c < len(C):
-        if B[b] <= C[c]:
-            A.append(B[b])
-            b += 1
-        else:
-            A.append(C[c])
-            c += 1
-            # Starting positions of B are less than those of C, so count
-            # inversions here.
-            inversions += (len(B) - b)
-
-    d, D = (b, B) if b < len(B) else (c, C)
-    A += D[d:]
-    return inversions, A
-
 
 
 def solve(N, K, B, T, initial_locations, natural_speeds):

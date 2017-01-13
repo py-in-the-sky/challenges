@@ -1,5 +1,10 @@
 """
 https://code.google.com/codejam/contest/635101/dashboard#s=p0
+
+This solution is a simple DATA STRUCTURES solution. It uses a tree to
+simulate the process described in the problem statement and runs in time
+linear of the number of bytes in the input file, which is asymptotically
+optimal.
 """
 
 
