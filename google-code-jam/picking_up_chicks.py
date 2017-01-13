@@ -5,6 +5,11 @@ This is an example of a GREEDY ALGORITHM. The input data is transformed
 into end_locations and operated on in one simple pass. Although this is
 a greedy algorithm, the problem statement isn't (or doesn't seem to be)
 amenable to reduction to a matroid (as opposed to Kruskal's MST solution).
+
+Note that while we had success "simulating" the process described in the
+file-fixit problem (see file_fixit.py), it's unclear what we'd do to simulate
+the process described in this problem, and a simulation would likely result in a
+more complicated solution, compared to this simple greedy solution.
 """
 
 
