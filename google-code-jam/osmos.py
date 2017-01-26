@@ -13,7 +13,7 @@ After choosing i, how many of the largest motes to remove, the number of mote in
 is determined by the greedy algorithm. Therefore, choose i from [0, N] such that
 i plus the number of resulting greedy insertions is minimized.
 
-Runtime: O(NlogN + N (M-a)/a).
+Runtime: O(NlogN + NM/a).
 
 Question: is the runtime pseudo-polynomial? It depends on the size of a, and for each
 iteration in the main for loop, it performs operations on a. Therefore, in the runtime,
@@ -31,7 +31,7 @@ def osmos(a, motes):
     n_intervening_motes = [0 for _ in xrange(N+1)]  # O(N).
     # n_intervening_motes: the number of motes greedily inserted when eating up to i motes.
 
-    for i in xrange(1, N+1):  # O(N (M-a)/a) where M is the size of the largest mote.
+    for i in xrange(1, N+1):  # O(NM/a) where M is the size of the largest mote.
         n = 0
         m = motes[i-1]
 
