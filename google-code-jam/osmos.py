@@ -1,7 +1,12 @@
 """
 https://code.google.com/codejam/contest/dashboard?c=2434486
 
-This is a search over N GREEDY ALGORITHM solutions.
+This is a SEARCH plus GREEDY ALGORITHM solution.
+
+Specifically, it performs brute-force search over len(motes)+1 applications of the
+greedy algorithm. The application of the greedy algorithm to larger problems is built
+on solutions to smaller ones, so in one pass we memoize all results for 0..len(motes)+1,
+storing the results in an array of length len(motes)+1, in O(len(motes)) time.
 
 When removing a mote, it's always optimal to remove the largest remaining mote.
 
