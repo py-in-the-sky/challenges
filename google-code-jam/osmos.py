@@ -13,6 +13,14 @@ After choosing i, how many of the largest motes to remove, the number of mote in
 is determined by the greedy algorithm. Therefore, choose i from [0, N] such that
 i plus the number of resulting greedy insertions is minimized.
 
+Intuition: given that we're going to remove i motes:
+    * Which i motes should we remove? It is optimal to remove the i largest.
+    * How should we go about eating the rest? In the greedy fashion described above.
+Given this, we choose the i that results in the fewest removals plus insertions.
+
+See a more thorough justification of the greedy approach here:
+https://code.google.com/codejam/contest/dashboard?c=2434486#s=a&a=0
+
 Runtime: O(NlogN + NM/a).
 
 Question: is the runtime pseudo-polynomial? It depends on the size of a, and for each
