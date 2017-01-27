@@ -26,11 +26,27 @@ Given this, we choose the i that results in the fewest removals plus insertions.
 See a more thorough justification of the greedy approach here:
 https://code.google.com/codejam/contest/dashboard?c=2434486#s=a&a=0
 
-Runtime: O(NlogN + NM/a).
+Runtime: O(NlogN + NM/a) where M is the size of the largest mote.
 
 Question: is the runtime pseudo-polynomial? It depends on the size of a, and for each
 iteration in the main for loop, it performs operations on a. Therefore, in the runtime,
 should we consider the size of the bit array that stores a?
+
+No, it is not pseudo-polynomial. The analysis of pseudo-polynomial runtime proceeds by
+expressing the input size in terms of the bits used, recasting the runtime expression
+in terms of bits, and seeing whether the variables in the input expression are involved
+in an exponential expression in the runtime.
+
+    Input size: O(b + Nc) where b = O(loga) and c = O(logM).
+    Runtime: O(NlogN + NM/a) = O(NlogN + N 2^c/2^b) = O(NlogN + N2^(c-b)).
+
+Presumably, the number of bits to represent the integers a and M are the same, whether on
+a 32- or 64-bit machine. Therefore, c-b doesn't change across these machines. Therefore,
+this solution is not pseudo-polynomial; in other words, it's not exponential in any
+input size.
+
+See this as an informative example of pseudo-polynomial runtime analysis:
+    https://courses.csail.mit.edu/6.006/fall11/rec/rec21_knapsack.pdf
 """
 
 
