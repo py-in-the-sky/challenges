@@ -2,6 +2,9 @@
 WIP!!!!!!!!
 
 https://code.google.com/codejam/contest/2434486/dashboard#s=p1
+
+This problem involves GEOMETRY, COUNTING, PROBABILITY, and dealing with tricky
+edge cases around feasibility and counting.
 """
 
 
