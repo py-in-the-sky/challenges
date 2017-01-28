@@ -33,9 +33,9 @@ iteration in the main for loop, it performs operations on a. Therefore, in the r
 should we consider the size of the bit array that stores a?
 
 No, it is not pseudo-polynomial. The analysis of pseudo-polynomial runtime proceeds by
-expressing the input size in terms of the bits used, recasting the runtime expression
-in terms of bits, and seeing whether the variables in the input expression are involved
-in an exponential expression in the runtime.
+expressing the input size in terms of the bits used, seeing how the number of bits appears
+in or can be substituted into the already-known runtime expression, and then seeing whether
+the variables in the input expression are involved in an exponential expression in the runtime.
 
     Input size: O(b + Nc) where b = O(loga) and c = O(logM).
     Runtime: O(NlogN + NM/a) = O(NlogN + N 2^c/2^b) = O(NlogN + N2^(c-b)).
