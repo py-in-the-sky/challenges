@@ -1,3 +1,22 @@
+"""
+This is an intuitive solution because we do a double-sort according to both
+sorting conditions described in the problem statement -- that is, we first
+sort by height descending, and then we ensure when two blooms overlap, the
+smaller flower is in front of the bigger flower, moving the bigger flower
+back the absolute minimum needed to make this happen.
+
+So we first sort by height descending. Then the next step is that we iterate
+forward through the row, asking whether there's a flower ahead of the current
+one that's in bloom at the same time. (Because in this second step we only ever
+resort row[:j], we know that all flowers before the current flower are taller
+than it.) We move the current flower just before the first flower that has a
+bloom that overlaps with it. By moving the current flower to just before the
+first flower whose bloom overlaps with it, we ensure we move flowers back the
+absolute minimum in order to satisfy the second sorting criterion. (By moving
+flowers back the absolute minimum, we satisfy the first sorting criterion.)
+"""
+
+
 class FlowerGarden:
     "https://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006"
     def getOrdering(self, height, bloom, wilt):
