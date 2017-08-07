@@ -26,9 +26,8 @@ def print_k_sum_paths_binary_tree(root_node, k):
         sum_indices[sum_total2].remove(index)
         node_values.pop()
 
-    # sum_indices is a dictionary. sum_indices[x] is a set of nodes
-    # on a path from the root node such that the running sum of
-    # the path is x.
+    # sum_indices is a dictionary. sum_indices[x] is a set of indices, i,
+    # into node_values such that sum(node_values[:i+1]) the path is x.
     sum_indices = defaultdict(set)
     sum_indices[0].add(0)
     node_values = [0]
