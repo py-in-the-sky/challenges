@@ -35,10 +35,17 @@ Simplified JSON definition, adapted from http://www.json.org/
 
 
 from lex import lex
-from parse import parse
-from load import load
-from util import pipe_value
+from parse import parse, ObjectNode
 
 
 def load_string(json_string):
     return pipe_value(unicode(json_string), (lex, parse, load))
+
+
+def pipe_value(value, functions):
+    return reduce(lambda v, fn: fn(v), functions, value)
+
+
+def load(object_node):
+    assert isinstance(object_node, ObjectNode)
+    return object_node.to_python()
