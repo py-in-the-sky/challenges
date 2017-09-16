@@ -42,10 +42,10 @@ def load_string(json_string):
     return pipe_value(unicode(json_string), (lex, parse, load))
 
 
-def pipe_value(value, functions):
-    return reduce(lambda v, fn: fn(v), functions, value)
-
-
 def load(object_node):
     assert isinstance(object_node, ObjectNode)
     return object_node.to_python()
+
+
+def pipe_value(value, functions):
+    return reduce(lambda v, fn: fn(v), functions, value)

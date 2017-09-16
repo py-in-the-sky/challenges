@@ -1,11 +1,12 @@
 from collections import deque
 
-from lex import LexTypes
+from lex import LexTags, tag, is_tagged
 
 
 def parse(lex_list):
+    assert isinstance(lex_list, deque)
     object_node, lex_list = build_object_node(lex_list)
-    assert not lex_list
+    assert not lex_list and isinstance(object_node, ObjectNode)
     return object_node
 
 
@@ -13,8 +14,8 @@ class ObjectNode:
     @classmethod
     def from_lex_list(cls, lex_list):
         assert (len(lex_list) >= 2 and
-                is_type(lex_list[0], LexTypes.LEFT_BRACKET) and
-                is_type(lex_list[-1], LexTypes.RIGHT_BRACKET))
+                is_tagged(lex_list[0], LexTags.LEFT_BRACKET) and
+                is_tagged(lex_list[-1], LexTags.RIGHT_BRACKET))
 
         lex_list.pop()
         lex_list.popleft()
@@ -32,8 +33,8 @@ class MemberNode:
     def members_from_lex_list(cls, lex_list):
         while lex_list:
             assert (len(lex_list) >= 3 and
-                    is_type(lex_list[0], LexTypes.STRING) and
-                    is_type(lex_list[1], LexTypes.COLON))
+                    is_tagged(lex_list[0], LexTags.STRING) and
+                    is_tagged(lex_list[1], LexTags.COLON))
 
             key_node = StringNode.from_lex_item(lex_list.popleft())
             lex_list.popleft()  # throw away colon
@@ -44,7 +45,7 @@ class MemberNode:
             yield cls(key_node, value_node)
 
             if lex_list:  # has comma next
-                assert is_type(lex_list[0], LexTypes.COMMA)
+                assert is_tagged(lex_list[0], LexTags.COMMA)
                 lex_list.popleft()
 
     def __init__(self, key_node, value_node):
@@ -59,8 +60,8 @@ class ArrayNode:
     @classmethod
     def from_lex_list(cls, lex_list):
         assert (len(lex_list) >= 2 and
-                is_type(lex_list[0], LexTypes.LEFT_BRACE) and
-                is_type(lex_list[-1], LexTypes.RIGHT_BRACE))
+                is_tagged(lex_list[0], LexTags.LEFT_BRACE) and
+                is_tagged(lex_list[-1], LexTags.RIGHT_BRACE))
 
         lex_list.pop()
         lex_list.popleft()
@@ -74,7 +75,7 @@ class ArrayNode:
                 yield element_node
 
                 if lex_list:  # has comma next
-                    assert is_type(lex_list[0], LexTypes.COMMA)
+                    assert is_tagged(lex_list[0], LexTags.COMMA)
                     lex_list.popleft()
 
         return cls(list(_array_items(lex_list)))
@@ -89,7 +90,7 @@ class ArrayNode:
 class StringNode:
     @classmethod
     def from_lex_item(cls, lex_item):
-        assert is_type(lex_item, LexTypes.STRING)
+        assert is_tagged(lex_item, LexTags.STRING)
         return cls(lex_item.value)
 
     def __init__(self, value):
@@ -102,7 +103,7 @@ class StringNode:
 class NumberNode:
     @classmethod
     def from_lex_item(cls, lex_item):
-        assert is_type(lex_item, LexTypes.NUMBER)
+        assert is_tagged(lex_item, LexTags.NUMBER)
         return cls(lex_item.value)
 
     def __init__(self, value):
@@ -115,7 +116,7 @@ class NumberNode:
 class TrueNode:
     @classmethod
     def from_lex_item(cls, lex_item):
-        assert is_type(lex_item, LexTypes.TRUE)
+        assert is_tagged(lex_item, LexTags.TRUE)
         return cls()
 
     def to_python(self):
@@ -125,7 +126,7 @@ class TrueNode:
 class FalseNode:
     @classmethod
     def from_lex_item(cls, lex_item):
-        assert is_type(lex_item, LexTypes.FALSE)
+        assert is_tagged(lex_item, LexTags.FALSE)
         return cls()
 
     def to_python(self):
@@ -135,39 +136,30 @@ class FalseNode:
 class NullNode:
     @classmethod
     def from_lex_item(cls, lex_item):
-        assert is_type(lex_item, LexTypes.NULL)
+        assert is_tagged(lex_item, LexTags.NULL)
         return cls()
 
     def to_python(self):
         return None
 
 
-NODE_MAPPING = {
-    LexTypes.TRUE: TrueNode,
-    LexTypes.FALSE: FalseNode,
-    LexTypes.NULL: NullNode,
-    LexTypes.STRING: StringNode,
-    LexTypes.NUMBER: NumberNode,
-}
-
-
 def build_node(lex_list):
     if not lex_list:
         return None, lex_list
-    elif is_type(lex_list[0], LexTypes.LEFT_BRACKET):
+    elif is_tagged(lex_list[0], LexTags.LEFT_BRACKET):
         return build_object_node(lex_list)
-    elif is_type(lex_list[0], LexTypes.LEFT_BRACE):
+    elif is_tagged(lex_list[0], LexTags.LEFT_BRACE):
         return build_array_node(lex_list)
     else:
         lex_item = lex_list.popleft()
         return build_value_node(lex_item), lex_list
 
 
-def aggregate_node_builder(opening_item_type, aggregate_node_class):
+def aggregate_node_builder(opening_item_tag, aggregate_node_class):
     assert aggregate_node_class in (ObjectNode, ArrayNode)
 
     def _build(lex_list):
-        assert lex_list and is_type(lex_list[0], opening_item_type)
+        assert lex_list and is_tagged(lex_list[0], opening_item_tag)
 
         right_lex_list = lex_list
         opening_item = right_lex_list.popleft()
@@ -178,13 +170,13 @@ def aggregate_node_builder(opening_item_type, aggregate_node_class):
             item = right_lex_list.popleft()
             left_lex_list.append(item)
 
-            if is_type(item, LexTypes.RIGHT_BRACE):
-                assert is_type(stack[-1], LexTypes.LEFT_BRACE)
+            if is_tagged(item, LexTags.RIGHT_BRACE):
+                assert is_tagged(stack[-1], LexTags.LEFT_BRACE)
                 stack.pop()
-            elif is_type(item, LexTypes.RIGHT_BRACKET):
-                assert is_type(stack[-1], LexTypes.LEFT_BRACKET)
+            elif is_tagged(item, LexTags.RIGHT_BRACKET):
+                assert is_tagged(stack[-1], LexTags.LEFT_BRACKET)
                 stack.pop()
-            elif is_type(item, LexTypes.LEFT_BRACE) or is_type(item, LexTypes.LEFT_BRACKET):
+            elif is_tagged(item, LexTags.LEFT_BRACE) or is_tagged(item, LexTags.LEFT_BRACKET):
                 stack.append(item)
 
         return aggregate_node_class.from_lex_list(left_lex_list), right_lex_list
@@ -192,14 +184,19 @@ def aggregate_node_builder(opening_item_type, aggregate_node_class):
     return _build
 
 
-build_object_node = aggregate_node_builder(LexTypes.LEFT_BRACKET, ObjectNode)
-build_array_node = aggregate_node_builder(LexTypes.LEFT_BRACE, ArrayNode)
+build_object_node = aggregate_node_builder(LexTags.LEFT_BRACKET, ObjectNode)
+build_array_node = aggregate_node_builder(LexTags.LEFT_BRACE, ArrayNode)
 
 
 def build_value_node(lex_item):
-    node_class = NODE_MAPPING[lex_item.type]
+    node_class = NODE_MAPPING[tag(lex_item)]
     return node_class.from_lex_item(lex_item)
 
 
-def is_type(lex_item, type_string):
-    return lex_item.type is type_string
+NODE_MAPPING = {
+    LexTags.TRUE: TrueNode,
+    LexTags.FALSE: FalseNode,
+    LexTags.NULL: NullNode,
+    LexTags.STRING: StringNode,
+    LexTags.NUMBER: NumberNode,
+}

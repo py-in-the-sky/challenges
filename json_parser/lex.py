@@ -3,32 +3,41 @@ from collections import deque, namedtuple
 
 
 def lex(json_string):
+    assert isinstance(json_string, unicode)
     return deque(wrap_match(match.group()) for match in RE.finditer(json_string))
 
 
 def wrap_match(s):
     assert isinstance(s, unicode)
-    return LexItem(lex_type(s), s)
+    return LexItem(lex_tag_of_string(s), s)
 
 
-def lex_type(s):
+def lex_tag_of_string(s):
     assert isinstance(s, unicode)
-    _lex_type = TOKEN_TO_TYPE.get(s, LITERAL_TO_TYPE.get(s))
+    lex_tag = TOKEN_TO_TAG.get(s, LITERAL_TO_TAG.get(s))
 
-    if _lex_type is None:
+    if lex_tag is None:
         if RE_STRING.match(s):
-            _lex_type = LexTypes.STRING
+            lex_tag = LexTags.STRING
         elif RE_NUMBER.match(s):
-            _lex_type = LexTypes.NUMBER
+            lex_tag = LexTags.NUMBER
 
-    assert _lex_type
-    return _lex_type
-
-
-LexItem = namedtuple('LexItem', 'type value')
+    assert lex_tag
+    return lex_tag
 
 
-class LexTypes:
+def is_tagged(lex_item, lex_tag):
+    return lex_item.tag is lex_tag
+
+
+def tag(lex_item):
+    return lex_item.tag
+
+
+LexItem = namedtuple('LexItem', 'tag value')
+
+
+class LexTags:
     OBJECT = "OBJECT"
     ARRAY = "ARRAY"
     STRING = "STRING"
@@ -74,20 +83,20 @@ RE_STRING = re.compile(STRING_PATTERN)
 RE_NUMBER = re.compile(NUMBER_PATTERN)
 
 
-## Mappings from tokens and literals to their types
+## Mappings from tokens and literals to their tags
 
-TOKEN_TO_TYPE = {
-    LEFT_BRACE_TOKEN: LexTypes.LEFT_BRACE,
-    RIGHT_BRACE_TOKEN: LexTypes.RIGHT_BRACE,
-    LEFT_BRACKET_TOKEN: LexTypes.LEFT_BRACKET,
-    RIGHT_BRACKET_TOKEN: LexTypes.RIGHT_BRACKET,
-    COMMA_TOKEN: LexTypes.COMMA,
-    COLON_TOKEN: LexTypes.COLON,
+TOKEN_TO_TAG = {
+    LEFT_BRACE_TOKEN: LexTags.LEFT_BRACE,
+    RIGHT_BRACE_TOKEN: LexTags.RIGHT_BRACE,
+    LEFT_BRACKET_TOKEN: LexTags.LEFT_BRACKET,
+    RIGHT_BRACKET_TOKEN: LexTags.RIGHT_BRACKET,
+    COMMA_TOKEN: LexTags.COMMA,
+    COLON_TOKEN: LexTags.COLON,
 }
 
 
-LITERAL_TO_TYPE = {
-    TRUE_LITERAL: LexTypes.TRUE,
-    FALSE_LITERAL: LexTypes.FALSE,
-    NULL_LITERAL: LexTypes.NULL,
+LITERAL_TO_TAG = {
+    TRUE_LITERAL: LexTags.TRUE,
+    FALSE_LITERAL: LexTags.FALSE,
+    NULL_LITERAL: LexTags.NULL,
 }
