@@ -1,6 +1,6 @@
 from collections import deque
 
-from lex import LexTags, tag, is_tagged
+from lex import LexTags, tag, value, is_tagged
 
 
 def parse(lex_list):
@@ -91,7 +91,7 @@ class StringNode:
     @classmethod
     def from_lex_item(cls, lex_item):
         assert is_tagged(lex_item, LexTags.STRING)
-        return cls(lex_item.value)
+        return cls(value(lex_item))
 
     def __init__(self, value):
         self.value = value
@@ -104,7 +104,7 @@ class NumberNode:
     @classmethod
     def from_lex_item(cls, lex_item):
         assert is_tagged(lex_item, LexTags.NUMBER)
-        return cls(lex_item.value)
+        return cls(value(lex_item))
 
     def __init__(self, value):
         self.value = value

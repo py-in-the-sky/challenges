@@ -3,8 +3,12 @@ from collections import deque, namedtuple
 
 
 def lex(json_string):
+    return deque(lex_lazy(json_string))
+
+
+def lex_lazy(json_string):
     assert isinstance(json_string, unicode)
-    return deque(wrap_match(match.group()) for match in RE.finditer(json_string))
+    return (wrap_match(match.group()) for match in RE.finditer(json_string))
 
 
 def wrap_match(s):
@@ -34,12 +38,14 @@ def tag(lex_item):
     return lex_item.tag
 
 
+def value(lex_item):
+    return lex_item.value
+
+
 LexItem = namedtuple('LexItem', 'tag value')
 
 
 class LexTags:
-    OBJECT = "OBJECT"
-    ARRAY = "ARRAY"
     STRING = "STRING"
     TRUE = "TRUE"
     FALSE = "FALSE"
@@ -51,7 +57,6 @@ class LexTags:
     RIGHT_BRACE = "RIGHT_BRACE"
     COMMA = "COMMA"
     COLON = "COLON"
-    QUOTE = "QUOTE"
 
 
 ## Lexing tokens, literals, and patterns

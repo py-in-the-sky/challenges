@@ -34,12 +34,17 @@ Simplified JSON definition, adapted from http://www.json.org/
 """
 
 
-from lex import lex
+from lex import lex, lex_lazy
 from parse import parse, ObjectNode
+from parse_faster import parse_faster
 
 
 def load_string(json_string):
     return pipe_value(unicode(json_string), (lex, parse, load))
+
+
+def load_string_faster(json_string):
+    return pipe_value(unicode(json_string), (lex_lazy, parse_faster))
 
 
 def load(object_node):
