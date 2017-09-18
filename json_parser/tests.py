@@ -4,18 +4,17 @@ from json_parser import load_string, load_string_faster
 
 
 def tests():
-    s = r'{ "foo": "bar", "yo": [{ "hi": "there\"blah" }, 1000] }'
-    s2 = r'{ "one": { "two": [{ "three": { "four": null }}, false ], "five": 5 }}'
+    test_cases = [
+        r'{ "foo": "bar", "yo": [{ "hi": "there\"blah" }, 1000] }',
+        r'{ "one": { "two": [{ "three": { "four": null }}, false ], "five": 5 }}',
+        r'{ "foo": "bar", "baz": null }',
+    ]
 
-    print
-    print 'JSON:', s
-    print 'PYTHON:', load_string_faster(s)
-    assert json.loads(s) == load_string(s) == load_string_faster(s)
-
-    print
-    print 'JSON:', s2
-    print 'PYTHON:', load_string_faster(s2)
-    assert json.loads(s2) == load_string(s2) == load_string_faster(s2)
+    for json_string in test_cases:
+        print
+        print 'JSON:', json_string
+        print 'PYTHON:', load_string_faster(json_string)
+        assert json.loads(json_string) == load_string(json_string) == load_string_faster(json_string)
 
     print
     print 'Tests pass!'
