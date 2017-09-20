@@ -1,6 +1,6 @@
 import json
 
-from json_parser import load_string, load_string_faster
+from json_parser import load_string, load_string_faster, load_string_even_faster
 
 
 def tests():
@@ -13,8 +13,11 @@ def tests():
     for json_string in test_cases:
         print
         print 'JSON:', json_string
-        print 'PYTHON:', load_string_faster(json_string)
-        assert json.loads(json_string) == load_string(json_string) == load_string_faster(json_string)
+        print 'PYTHON:', load_string_even_faster(json_string)
+        assert (json.loads(json_string)
+                == load_string(json_string)
+                == load_string_faster(json_string)
+                == load_string_even_faster(json_string))
 
     print
     print 'Tests pass!'

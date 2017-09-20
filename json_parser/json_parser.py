@@ -37,6 +37,7 @@ Simplified JSON definition, adapted from http://www.json.org/
 from lex import lex, lex_lazy
 from parse import parse, ObjectNode
 from parse_faster import parse_faster
+from parse_even_faster import parse_even_faster
 
 
 def load_string(json_string):
@@ -45,6 +46,9 @@ def load_string(json_string):
 
 def load_string_faster(json_string):
     return pipe_value(unicode(json_string), (lex_lazy, parse_faster))
+
+
+load_string_even_faster = parse_even_faster
 
 
 def load(object_node):
