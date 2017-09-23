@@ -66,7 +66,7 @@ def parse_factor(s, i):
     first_char = s[i]
 
     if first_char == '(':
-        assert s[i+1] in DIGITS+'-'
+        assert s[i+1] in DIGITS+'-('
         return parse(s, i+1)
     elif first_char == '*':
         assert s[i+1] in DIGITS+'('
@@ -144,6 +144,8 @@ def tests():
         (1+1)
         2/(1+1)+3
         2/(-1-1)
+        ((1+(3*4+3)-(-1*8))/(4+5*7))
+        (((1))*((((2)))))
     """
 
 
