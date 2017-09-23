@@ -3,8 +3,10 @@
 4-6+8         = 4+(-1*6)+8
 4-6*8+2       = 4+(-1*6*8)+2
 4-(6*8+2)+100 = 4+(-1*(6*8+2))+100
-
 -1*(1+2)
+
+Turn division into multiplication by a ratio, and turn subtraction into
+addition of a negatively valued term.
 """
 
 
