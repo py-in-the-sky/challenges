@@ -1,3 +1,8 @@
+"""
+Inspired by https://github.com/simplejson/simplejson/blob/db2a216a858e8fd2cbfd53ac52c7972e5d3b3c5a/simplejson/scanner.py#L82
+"""
+
+
 def parse_even_faster(json_string):
     python_object, i = parse(json_string)
 
