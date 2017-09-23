@@ -149,7 +149,8 @@ def tests():
         (1+1)
         2/(1-1*-1)+3
         2/(-1-1)
-        ((1+(3*-(4+20)+3)-(-1*8))/(4+5*7))
+        (1+(3*-(4+20)*-19999)+305*-100000)
+        ((1+(3*-(4+2)+3)-(-1*8))/(4+5*7))
         (((1))*((((2)))))
         1*-2+3
     """
@@ -158,7 +159,9 @@ def tests():
     parsed_cases = (s.strip() for s in cases.split('\n') if s.strip())
 
     for case in parsed_cases:
-        assert eval_expression(case) == eval(case)
+        actual = eval_expression(case)
+        expected = eval(case)
+        assert actual == expected, 'case: {}; actual: {}; expected: {}'.format(case, actual, expected)
 
     print 'Tests pass!'
 
