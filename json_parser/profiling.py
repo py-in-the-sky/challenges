@@ -22,7 +22,7 @@ json.loads(r'{ "one": { "two": [{ "three": { "four": null }}, false ], "five": 5
 
 
 def time():
-    n = 10
+    n = 1000
     print "Timing on input:", r'{ "one": { "two": [{ "three": { "four": null }}, false ], "five": 5 }}'
     print 'load_string:            ', timeit(TEST1, "from json_parser import load_string", number=n)
     print 'load_string_faster:     ', timeit(TEST2, "from json_parser import load_string_faster", number=n)

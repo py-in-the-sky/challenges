@@ -12,6 +12,7 @@ addition of a negatively valued term.
 
 from __future__ import division
 from operator import mul
+from timeit import timeit
 
 
 DIGITS = '1234567890'
@@ -134,31 +135,32 @@ class NumberNode:
         return self.number
 
 
+CASES = """
+    1*2/3*4+5-6+8
+    4-6+8
+    4-6*8+2
+    1*1
+    1*2*3/4+5
+    -1*2
+    -1+2
+    405
+    4-(6*8+2)+100
+    -1*(1+2)*3
+    (1+1)
+    2/(1-1*-1)+3
+    2/(-1-1)
+    (1+(3*-(4+20)*-19999)+305*-100000)
+    ((1+(3*-(4+2)+3)-(-1*8))/(4+5*7))
+    (((1))*((((2)))))
+    1*-2+3
+"""
+
+
+PARSED_CASES = (s.strip() for s in CASES.split('\n') if s.strip())
+
+
 def tests():
-    cases = """
-        1*2/3*4+5-6+8
-        4-6+8
-        4-6*8+2
-        1*1
-        1*2*3/4+5
-        -1*2
-        -1+2
-        405
-        4-(6*8+2)+100
-        -1*(1+2)*3
-        (1+1)
-        2/(1-1*-1)+3
-        2/(-1-1)
-        (1+(3*-(4+20)*-19999)+305*-100000)
-        ((1+(3*-(4+2)+3)-(-1*8))/(4+5*7))
-        (((1))*((((2)))))
-        1*-2+3
-    """
-
-
-    parsed_cases = (s.strip() for s in cases.split('\n') if s.strip())
-
-    for case in parsed_cases:
+    for case in PARSED_CASES:
         actual = eval_expression(case)
         expected = eval(case)
         assert actual == expected, 'case: {}; actual: {}; expected: {}'.format(case, actual, expected)
@@ -166,5 +168,15 @@ def tests():
     print 'Tests pass!'
 
 
+def timing():
+    n = 1000000
+    timing_template = 'for case in PARSED_CASES: {}(case)'
+    setup = 'from __main__ import PARSED_CASES, eval_expression'
+    print 'eval_expression:', timeit(timing_template.format('eval_expression'), setup=setup, number=n)
+    print 'eval:           ', timeit(timing_template.format('eval'), setup=setup, number=n)
+
+
 if __name__ == '__main__':
+    timing()
     tests()
+    timing()
