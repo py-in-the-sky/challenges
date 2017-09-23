@@ -53,7 +53,7 @@ def parse_term(s, i):
     elif first_char == '+':
         return parse_term(s, i+1)
 
-    assert first_char == '(' or first_char in DIGITS
+    assert first_char in DIGITS+'('
 
     multiplication_node = MultiplicationNode()
 
@@ -71,12 +71,15 @@ def parse_factor(s, i):
         assert s[i+1] in DIGITS+'-('
         return parse(s, i+1)
     elif first_char == '*':
-        assert s[i+1] in DIGITS+'('
+        assert s[i+1] in DIGITS+'-('
         return parse_factor(s, i+1)
     elif first_char == '/':
-        assert s[i+1] in DIGITS+'('
+        assert s[i+1] in DIGITS+'-('
         node, i = parse_factor(s, i+1)
         return DivisionNode(NumberNode(1), node), i
+    elif first_char == '-':
+        node, i = parse_factor(s, i+1)
+        return MultiplicationNode(NumberNode(-1), node), i
     elif first_char in DIGITS:
         return parse_integer(s, i)
     else:
@@ -144,10 +147,11 @@ def tests():
         4-(6*8+2)+100
         -1*(1+2)*3
         (1+1)
-        2/(1+1)+3
+        2/(1-1*-1)+3
         2/(-1-1)
-        ((1+(3*4+3)-(-1*8))/(4+5*7))
+        ((1+(3*-(4+2)+3)-(-1*8))/(4+5*7))
         (((1))*((((2)))))
+        1*-2+3
     """
 
 
