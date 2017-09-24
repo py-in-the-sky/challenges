@@ -121,10 +121,6 @@ class NumberNode:
         return self.number
 
 
-INVALID_EXPRESSION_MESSAGE_TEMPLATE_LINE_1 = ""
-INVALID_EXPRESSION_MESSAGE_TEMPLATE_LINE_2 = ""
-
-
 def invalid_arithmetic_expression(s, i):
     assertion_error_length = len('AssertionError: ')
     caret = ' ' * (i + assertion_error_length) + '^'
