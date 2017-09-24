@@ -37,9 +37,9 @@ def parse_expression(s, i=0, negative_first_term=False):
     if negative_first_term:
         left_node = negate(left_node)
 
-    assert i == len(s) or s[i] in '+-', invalid_arithmetic_expression(s, i)
+    assert i == len(s) or s[i] in '+-)', invalid_arithmetic_expression(s, i)
 
-    if i == len(s):
+    if i == len(s) or s[i] == ')':
         return left_node, i
     elif s[i] in '+-':
         right_node, i = parse_expression(s, i+1, s[i] == '-')
@@ -52,9 +52,9 @@ def parse_term(s, i, take_reciprocal_of_first_factor=False):
     if take_reciprocal_of_first_factor:
         left_node = ReciprocalNode(left_node)
 
-    assert i == len(s) or s[i] in '+-*/', invalid_arithmetic_expression(s, i)
+    assert i == len(s) or s[i] in '+-*/)', invalid_arithmetic_expression(s, i)
 
-    if i == len(s) or s[i] in '+-':
+    if i == len(s) or s[i] in '+-)':
         return left_node, i
     elif s[i] in '*/':
         right_node, i = parse_term(s, i+1, s[i] == '/')
@@ -74,7 +74,9 @@ def parse_factor(s, i):
     elif s[i] in DIGITS:
         return parse_integer(s, i)
     else:  # s[i] == '('
-        pass
+        node, i = parse_expression(s, i+1)
+        assert s[i] == ')', 'Invalid arithmetic expression'
+        return node, i+1
 
 
 def parse_integer(s, i):
@@ -132,6 +134,16 @@ def invalid_arithmetic_expression(s, i):
 
 
 CASES = """
+    4-(6*8+2)+100
+    -1*(1+2)*3
+    (1+1)
+    2/(1-1*-1)+3
+    2/(-1-1)
+    (1+(3*-(4+20)*-19999)+305*-100000)
+    ((1+(3*-(4+2)+3)-(-1*8))/(4+5*7))
+    (((1))*((((2)))))
+    (1)
+    -(1)
     1*2/3*4+5-6+8
     4-6+8
     4-6*8+2
@@ -159,8 +171,9 @@ def tests():
 def timing():
     n = 1000000
     timing_template = 'for case in PARSED_CASES: {}(case)'
-    setup = 'from __main__ import PARSED_CASES, eval_arithmetic_expression'
+    setup = 'from __main__ import PARSED_CASES, eval_arithmetic_expression; from iteration2 import eval_expression'
     print 'eval_arithmetic_expression:', timeit(timing_template.format('eval_arithmetic_expression'), setup=setup, number=n)
+    print 'eval_expression:           ', timeit(timing_template.format('eval_expression'), setup=setup, number=n)
     print 'eval:                      ', timeit(timing_template.format('eval'), setup=setup, number=n)
 
 
