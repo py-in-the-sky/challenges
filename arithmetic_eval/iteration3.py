@@ -21,7 +21,7 @@ DIGITS = '1234567890'
 
 def eval_arithmetic_expression(arithmetic_expression_string):
     arithmetic_node, i = parse_expression(arithmetic_expression_string)
-    assert i == len(arithmetic_expression_string)  # Whole string has been parsed.
+    assert i == len(arithmetic_expression_string), invalid_arithmetic_expression(s, i)  # Whole string has been parsed.
     return arithmetic_node.calculate()
 
 
@@ -37,7 +37,7 @@ def parse_expression(s, i=0, negative_first_term=False):
     if negative_first_term:
         left_node = negate(left_node)
 
-    assert i == len(s) or s[i] in '+-', 'Invalid arithmetic expression'
+    assert i == len(s) or s[i] in '+-', invalid_arithmetic_expression(s, i)
 
     if i == len(s):
         return left_node, i
@@ -52,7 +52,7 @@ def parse_term(s, i, take_reciprocal_of_first_factor=False):
     if take_reciprocal_of_first_factor:
         left_node = ReciprocalNode(left_node)
 
-    assert i == len(s) or s[i] in '+-*/', 'Invalid arithmetic expression'
+    assert i == len(s) or s[i] in '+-*/', invalid_arithmetic_expression(s, i)
 
     if i == len(s) or s[i] in '+-':
         return left_node, i
@@ -65,10 +65,10 @@ def parse_factor(s, i):
     # All possible fators: positive and negated integers, and
     # positive and negated parenthetic expressions.
 
-    assert s[i] in DIGITS+'-('
+    assert s[i] in DIGITS+'-(', invalid_arithmetic_expression(s, i)
 
     if s[i] == '-':
-        assert s[i+1] in DIGITS+'('
+        assert s[i+1] in DIGITS+'(', invalid_arithmetic_expression(s, i+1)
         node, i = parse_factor(s, i+1)
         return negate(node), i
     elif s[i] in DIGITS:
@@ -117,6 +117,18 @@ class NumberNode:
 
     def calculate(self):
         return self.number
+
+
+INVALID_EXPRESSION_MESSAGE_TEMPLATE_LINE_1 = ""
+INVALID_EXPRESSION_MESSAGE_TEMPLATE_LINE_2 = ""
+
+
+def invalid_arithmetic_expression(s, i):
+    assertion_error_length = len('AssertionError: ')
+    caret = ' ' * (i + assertion_error_length) + '^'
+    message_line_1 = 'Invalid arithmetic expression. Unexpected token found: {}'.format(s)
+    message_line_2 = '                                                       {}'.format(caret)
+    return '{}\n{}'.format(message_line_1, message_line_2)
 
 
 CASES = """
