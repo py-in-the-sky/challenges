@@ -123,7 +123,7 @@ class NumberNode:
 
 def invalid_arithmetic_expression(s, i):
     assertion_error_length = len('AssertionError: ')
-    caret = ' ' * (i + assertion_error_length) + '^'
+    caret = ' ' * (assertion_error_length + i) + '^'
     message_line_1 = 'Invalid arithmetic expression. Unexpected token found: {}'.format(s)
     message_line_2 = '                                                       {}'.format(caret)
     return '{}\n{}'.format(message_line_1, message_line_2)
