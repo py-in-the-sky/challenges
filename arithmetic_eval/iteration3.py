@@ -78,11 +78,7 @@ def parse_factor(s, i):
 
 
 def parse_integer(s, i):
-    j = i
-
-    while j < len(s) and s[j] in DIGITS:
-        j += 1
-
+    j = next((j for j in xrange(i+1, len(s)) if s[j] not in DIGITS), len(s))
     return NumberNode(int(s[i:j])), j
 
 
