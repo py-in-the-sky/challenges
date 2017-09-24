@@ -1,3 +1,16 @@
+"""
+Simplification: all subtraction operations are converted to addition of
+a negated term (e.g., `1-2*2+3` becomes `1+(-1)*(2*2)+3`). Therefore, we
+have no subtraction operations in our binary expression tree. Similarly,
+all division operations are converted to multiplication of the reciprocal
+of the factor (e.g., `1/2*3` becomes `1*(1/2)*3`). Therefore, we have no
+division nodes in our binary expression tree.
+
+See futher discussion of binary expression trees in the docstring for
+`parse_expression`.
+"""
+
+
 from __future__ import division
 from operator import add, mul
 from timeit import timeit
