@@ -21,7 +21,7 @@ DIGITS = '1234567890'
 
 def eval_arithmetic_expression(arithmetic_expression_string):
     arithmetic_node, i = parse_expression(arithmetic_expression_string)
-    assert i == len(arithmetic_expression_string), invalid_arithmetic_expression(s, i)  # Whole string has been parsed.
+    assert i == len(arithmetic_expression_string), invalid_arithmetic_expression(arithmetic_expression_string, i)  # Whole string has been parsed.
     return arithmetic_node.calculate()
 
 
@@ -130,6 +130,7 @@ def invalid_arithmetic_expression(s, i):
 
 
 CASES = """
+    1+2*(3+4*(5+6))*7+8
     (1+2*(3+4*(5+6))*7+8)
     4-(6*8+2)+100
     -1*(1+2)*3
