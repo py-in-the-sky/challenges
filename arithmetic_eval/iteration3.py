@@ -130,6 +130,7 @@ def invalid_arithmetic_expression(s, i):
 
 
 CASES = """
+    (1+2*(3+4*(5+6))*7+8)
     4-(6*8+2)+100
     -1*(1+2)*3
     (1+1)
