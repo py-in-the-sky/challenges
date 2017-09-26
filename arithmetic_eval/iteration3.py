@@ -8,6 +8,8 @@ division nodes in our binary expression tree.
 
 See futher discussion of binary expression trees in the docstring for
 `parse_expression`.
+
+Inspired by json_parser/parse_even_faster.py.
 """
 
 

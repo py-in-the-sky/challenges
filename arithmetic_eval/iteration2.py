@@ -7,6 +7,8 @@
 
 Turn division into multiplication by a ratio, and turn subtraction into
 addition of a negatively valued term.
+
+Inspired by json_parser/parse_even_faster.py.
 """
 
 
