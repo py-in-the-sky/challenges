@@ -1,6 +1,9 @@
 """
 JSON definition: http://www.json.org/
 JSON-Python type mapping: https://github.com/simplejson/simplejson/blob/db2a216a858e8fd2cbfd53ac52c7972e5d3b3c5a/simplejson/decoder.py#L278
+
+JSON is a context-free language (http://shiffman.net/a2z/cfg/), not a regular
+language (https://cstheory.stackexchange.com/questions/3987/is-json-a-regular-language).
 """
 
 ### Top-level Function
