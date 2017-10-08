@@ -110,15 +110,27 @@ def parse_false(s, i):
 
 
 def parse_number(s, i):
-    # For simplicity, handling just integers for now. TODO: handle all
-    # number types in the JSON specification.
-    validate_json(s, i, condition=('0' <= s[i] <= '9'))
-    j = next((j for j in xrange(i, len(s)) if not '0' <= s[j] <= '9'), None)
+    validate_json(s, i, condition=(s[i] in '-IN' or '0' <= s[i] <= '9'))
 
-    if j is None:
-        return int(s[i:]), len(s)
-    else:
-        return int(s[i:j]), skip_leading_whitespace(s, j)
+    if s[i] == 'N':
+        validate_json(s, i, condition=(s[i:i+3] == 'NaN'))
+        return float('nan'), skip_leading_whitespace(s, i+3)
+    elif s[i] == 'I':
+        validate_json(s, i, condition=(s[i:i+8] == 'Infinity'))
+        return float('inf'), skip_leading_whitespace(s, i+8)
+    elif s[i] == '-' and s[i+1] == 'I':
+        validate_json(s, i, condition=(s[i:i+9] == '-Infinity'))
+        return float('-inf'), skip_leading_whitespace(s, i+9)
+
+    is_number_char = lambda char: '0' <= char <= '9' or char in '+-Ee.'
+    j = next((j for j in xrange(i, len(s)) if not is_number_char(s[j])), len(s))
+    use_float = any(s[i] in 'Ee.' for i in xrange(i, j))
+    python_converter = float if use_float else int
+
+    try:
+        return python_converter(s[i:j]), skip_leading_whitespace(s, j)
+    except ValueError:
+        raise_invalid_json_error('Invalid JSON number:', s, i)
 
 
 ### Skipping over Whitespace between JSON Tokens
@@ -202,7 +214,7 @@ def timeit():
             ]
         }
     })
-    test_json2 = r'  { "one": { "two": [{ "three": { "four": null }}, false], "five": 5 }}  '
+    test_json2 = r'  { "one": { "two": [{ "three": { "four": null }}, NaN, -Infinity, 2e+1, 50.403], "five": 5 }}  '
 
     for test_json in (test_json1, test_json2):
         test1 = "parse_json('{}')".format(test_json)
