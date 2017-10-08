@@ -1,19 +1,23 @@
-### Main
+"""
+JSON definition: http://www.json.org/
+JSON-Python type mapping: https://github.com/simplejson/simplejson/blob/db2a216a858e8fd2cbfd53ac52c7972e5d3b3c5a/simplejson/decoder.py#L278
+"""
 
 def parse_json(s):
     # For simplicity, not handling whitespace between lexical elements
     # of the JSON string. TODO: consume/ignore whitespace between elements.
-    assert s, 'string cannot be empty'
+    i = skip_leading_whitespace(s, 0)
+    assert i < len(s), 'string cannot be emtpy or blank'
 
     try:
-        python_element, i = _parse_json(s)
+        python_element, i = _parse_json(s, i)
         validate_json(s, i, condition=(i == len(s)))
         return python_element
     except IndexError:
         raise_invalid_json_error('Unexpected end of string:', s, len(s))
 
 
-def _parse_json(s, i=0):
+def _parse_json(s, i):
     first_char = s[i]
 
     if first_char == '{':
@@ -35,29 +39,29 @@ def _parse_json(s, i=0):
 def parse_object(s, i):
     validate_json(s, i, expected='{')
 
-    i += 1
+    i = skip_trailing_whitespace(s, i+1)
     python_dict = {}
 
     while s[i] != '}':
         key, i = parse_string(s, i)
         validate_json(s, i, expected=':')
-        value, i = _parse_json(s, i+1)
+        value, i = _parse_json(s, skip_trailing_whitespace(s, i+1))
 
         python_dict[key] = value
 
         if s[i] == ',':
-            i += 1
+            i = skip_trailing_whitespace(s, i+1)
             validate_json(s, i, not_expected='}')
         else:
             validate_json(s, i, expected='}')
 
-    return python_dict, i+1
+    return python_dict, skip_trailing_whitespace(s, i+1)
 
 
 def parse_array(s, i):
     validate_json(s, i, expected='[')
 
-    i += 1
+    i = skip_trailing_whitespace(s, i+1)
     python_list = []
 
     while s[i] != ']':
@@ -65,12 +69,12 @@ def parse_array(s, i):
         python_list.append(python_element)
 
         if s[i] == ',':
-            i += 1
+            i = skip_trailing_whitespace(s, i+1)
             validate_json(s, i, not_expected=']')
         else:
             validate_json(s, i, expected=']')
 
-    return python_list, i+1
+    return python_list, skip_trailing_whitespace(s, i+1)
 
 
 def parse_string(s, i):
@@ -81,26 +85,26 @@ def parse_string(s, i):
 
     while s[i] != '"':
         if s[i] == '\\':
-            i += 2
+            i += 2  # Escaped character takes up two spaces.
         else:
             i += 1
 
     python_string = s[i0:i].decode('string-escape')
-    return python_string, i+1
+    return python_string, skip_trailing_whitespace(s, i+1)
 
 
 def parse_null(s, i):
     validate_json(s, i, condition=(s[i:i+4] == 'null'))
-    return None, i+4
+    return None, skip_trailing_whitespace(s, i+4)
 
 def parse_true(s, i):
     validate_json(s, i, condition=(s[i:i+4] == 'true'))
-    return True, i+4
+    return True, skip_trailing_whitespace(s, i+4)
 
 
 def parse_false(s, i):
     validate_json(s, i, condition=(s[i:i+5] == 'false'))
-    return False, i+5
+    return False, skip_trailing_whitespace(s, i+5)
 
 
 def parse_number(s, i):
@@ -112,7 +116,15 @@ def parse_number(s, i):
     if j is None:
         return int(s[i:]), len(s)
     else:
-        return int(s[i:j]), j
+        return int(s[i:j]), skip_trailing_whitespace(s, j)
+
+
+### Skipping Whitespace between JSON Elements
+
+import re
+
+_whitespace_matcher = re.compile(r'\s*')
+skip_trailing_whitespace = skip_leading_whitespace = lambda s, i: _whitespace_matcher.match(s, i).end()
 
 
 ### Input Validation
@@ -167,14 +179,33 @@ def tests():
     test3 = '"hi \"asdf\""'
 
     for t in (test1, test2, test3):
-        s = json.dumps(t, separators=',:')
+        s = json.dumps(t)
         assert parse_json(s) == json.loads(s), s
 
     print 'Tests pass!'
 
 
 def timeit():
-    pass
+    import json
+    from timeit import timeit
+
+    test_json = json.dumps({
+        'hi\\"': "there",
+        "foo": {
+            "bar": 'baz',
+            'blah': [
+                {'foo':'bar', '   ': 40}
+            ]
+        }
+    })
+    test_json = r'{"one":{"two":[{"three":{"four":null}},false],"five":5}}'
+    test1 = "parse_json('{}')".format(test_json)
+    test2 = "json.loads('{}')".format(test_json)
+
+    n = 1000
+    print "Timing on input:", test_json
+    print 'parse_json:', timeit(test1, "from __main__ import parse_json", number=n)
+    print 'json.loads:', timeit(test2, "import json", number=n)
 
 
 if __name__ == '__main__':
