@@ -21,6 +21,15 @@ def parse_json(s):
 
 
 ### Parsing JSON and Translating it to Python
+# In the parsing functions below, two invariants are somewhat implicitly enforced
+# for values at the index `i`:
+#   1. When `i` is passed in as an argument to a function, `s[i]` is not whitespace.
+#   2. When `i` is returned from a function, `s[i]` is not whitespace.
+# Therefore, whenever a function is called or the value returned from a function is
+# handled, we can immediately begin using `s[i]` to inspect the next JSON token we need
+# to handle.
+# Other conditions on the value of `s[i]` are more explicitly enforced below, using
+# the `validate_json` function.
 
 def _parse_json(s, i):
     first_char = s[i]
