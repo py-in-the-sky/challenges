@@ -215,9 +215,13 @@ def timeit():
             'blah': [
                 {'foo':'bar', '   ': 40}
             ]
-        }
+        },
+        "foo2": float('nan'),
+        "foo3": float('inf'),
+        "foo4": float('-inf'),
+        "foo5": 2.3**-28
     })
-    test_json2 = r'  { "one": { "two": [{ "three": { "four": null }}, NaN, -Infinity, 2e+1, 50.403], "five": 5 }}  '
+    test_json2 = r'  { "one": { "two": [{ "three": { "four": null }}, NaN, -Infinity, 2e+1, 2E-2, 50.403], "five": 5 }}  '
 
     for test_json in (test_json1, test_json2):
         test1 = "parse_json('{}')".format(test_json)
