@@ -8,12 +8,12 @@ language (https://cstheory.stackexchange.com/questions/3987/is-json-a-regular-la
 
 ### Top-level Function
 
-def parse_json(s):
+def load_json_string(s):
     i = skip_leading_whitespace(s, 0)
     assert i < len(s), 'string cannot be emtpy or blank'
 
     try:
-        python_element, i = _parse_json(s, i)
+        python_element, i = parse_json(s, i)
         validate_json(s, i, condition=(i == len(s)))
         return python_element
     except IndexError:
@@ -31,7 +31,7 @@ def parse_json(s):
 # Other conditions on the value of `s[i]` are more explicitly enforced below, using
 # the `validate_json` function.
 
-def _parse_json(s, i):
+def parse_json(s, i):
     first_char = s[i]
 
     if first_char == '{':
@@ -59,7 +59,7 @@ def parse_object(s, i):
     while s[i] != '}':
         key, i = parse_string(s, i)
         validate_json(s, i, expected=':')
-        value, i = _parse_json(s, skip_trailing_whitespace(s, i))
+        value, i = parse_json(s, skip_trailing_whitespace(s, i))
 
         python_dict[key] = value
 
@@ -79,7 +79,7 @@ def parse_array(s, i):
     python_list = []
 
     while s[i] != ']':
-        python_element, i = _parse_json(s, i)
+        python_element, i = parse_json(s, i)
         python_list.append(python_element)
 
         if s[i] == ',':
@@ -208,7 +208,7 @@ def tests():
     for t in (test1, test2, test3):
         s = json.dumps(t)
         print 'Testing on input:', s
-        assert parse_json(s) == json.loads(s), s
+        assert load_json_string(s) == json.loads(s), s
 
     print 'Tests pass!'
 
@@ -233,13 +233,13 @@ def timeit():
     test_json2 = r'  { "one": { "two": [{ "three": { "four": null }}, NaN, -Infinity, 2e+1, 2E-2, 50.403], "five": 5 }}  '
 
     for test_json in (test_json1, test_json2):
-        test1 = "parse_json('{}')".format(test_json)
+        test1 = "load_json_string('{}')".format(test_json)
         test2 = "json.loads('{}')".format(test_json)
 
         n = 1000
         print
         print "Timing on input:", test_json
-        print 'parse_json:', timeit(test1, "from __main__ import parse_json", number=n)
+        print 'load_json_string:', timeit(test1, "from __main__ import load_json_string", number=n)
         print 'json.loads:', timeit(test2, "import json", number=n)
 
 
