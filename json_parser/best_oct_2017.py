@@ -21,8 +21,8 @@ def load_json_string(s):
 
 
 ### Parsing JSON and Translating it to Python
-# In the parsing functions below, two invariants are somewhat implicitly enforced
-# for values at the index `i`:
+# In the parsing functions below, two invariants are implicitly enforced for values
+# at the index `i`:
 #   1. When `i` is passed in as an argument to a function, `s[i]` is not whitespace.
 #   2. When `i` is returned from a function, `s[i]` is not whitespace.
 # Therefore, whenever a function is called or the value returned from a function is
