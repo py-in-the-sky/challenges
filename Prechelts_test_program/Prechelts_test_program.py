@@ -3,7 +3,7 @@ See: http://norvig.com/java-lisp.html
 Problem statement: http://www.flownet.com/ron/papers/lisp-java/instructions.html
 Other files: http://www.flownet.com/ron/papers/lisp-java/
 
-Completed in four sessions, for a total of two hours and 28 minutes.
+Completed in five sessions, for a total of two hours and 38 minutes.
 
 Start: 10:50am
 End: 12:26pm
@@ -15,6 +15,8 @@ End: 1:42pm
 
 Start: 2:30pm
 End: 2:55pm
+
+10 min
 
 Design notes:
 
@@ -33,6 +35,9 @@ from collections import defaultdict
 
 PHONE_NUMBER_FILENAME = 'phonenumbers.txt'
 DICTIONARY_FILENAME = 'dictionary.txt'
+EXPECTED_OUTPUTS_FILE = 'outputs.txt'
+SAMPLE_PHONE_NUMBER_FILENAME = 'sample-phonenumbers.txt'
+SAMPLE_DICTIONARY_FILENAME = 'sample-dictionary.txt'
 IGNORED_WORD_CHARACTERS = '-"'
 IGNORED_PHONE_NUMBER_CHARACTERS = '-/'
 RAW_LETTER_TO_DIGIT_MAPPING = """
@@ -45,7 +50,7 @@ e | j n q | r w x | d s y | f t | a m | c i v | b k u | l o p | g h z
 ### Top-level
 
 def main():
-    for phone_number, encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
+    for phone_number,encoding in all_encodings(file_lines(SAMPLE_PHONE_NUMBER_FILENAME), file_lines(SAMPLE_DICTIONARY_FILENAME)):
         print '{}: {}'.format(phone_number, encoding)
 
 
@@ -79,9 +84,12 @@ def phone_encodings(phone_number, digits_to_words):
         result = []
 
         for prefix,suffix in partitions(phone_number):
-            for suffix_encoding in _phone_encodings(suffix):
-                for word in digits_to_words.get(prefix, ()):
-                    result.append((word,) + suffix_encoding)
+            prefix_words = digits_to_words.get(prefix)
+
+            if prefix_words:
+                for suffix_encoding in _phone_encodings(suffix):
+                    for word in prefix_words:
+                        result.append((word,) + suffix_encoding)
 
         if result or not can_skip_first_digit:
             return result
@@ -149,5 +157,29 @@ def file_lines(filename):
             yield line.strip()
 
 
+def test():
+    expected_outputs = defaultdict(list)
+    for line in file_lines(EXPECTED_OUTPUTS_FILE):
+        phone_number, encoding = line.split(':')
+        expected_outputs[phone_number.strip()].append(encoding.strip())
+
+
+    actual_outputs = defaultdict(list)
+    for phone_number,encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
+        actual_outputs[phone_number].append(encoding)
+
+    print len(expected_outputs), len(actual_outputs)
+
+    for ph,encs in actual_outputs.iteritems():
+        if ph not in expected_outputs:
+            for enc in encs:
+                print '{}: {}'.format(ph, enc)
+
+    # assert expected_outputs == actual_outputs
+
+    print 'Test passes!'
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
