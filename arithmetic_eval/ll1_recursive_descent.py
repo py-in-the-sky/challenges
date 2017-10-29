@@ -36,7 +36,7 @@ def rewrite(tokens):
 
 rewrite_rules = {
     '-': ('+', -1, '*'),
-    '/': ('*', 1.0, '/')
+    '/': ('*', 1, '/')
 }
 
 
@@ -74,27 +74,29 @@ def parse_factor(tokens, i=0):
         assert tokens[i] == ')'
         return i+1, factor
     else:
+        assert isinstance(tokens[i], int)
         return i+1, tokens[i]
 
 
 def evaluate(arithmetic_tree):
-    assert isinstance(arithmetic_tree, (int, float)) or (isinstance(arithmetic_tree, tuple) and len(arithmetic_tree) in (1, 3)), arithmetic_tree
-
-    if isinstance(arithmetic_tree, (int, float)):
+    if isinstance(arithmetic_tree, int):
         return arithmetic_tree
-    elif len(arithmetic_tree) == 1:
+
+    assert isinstance(arithmetic_tree, tuple) and len(arithmetic_tree) in (1, 3)
+
+    if len(arithmetic_tree) == 1:
         return evaluate(arithmetic_tree[0])
     else:
         left_expression = evaluate(arithmetic_tree[0])
-        operation = arithmetic_tree[1]
+        operation = operations[arithmetic_tree[1]]
         right_expression = evaluate(arithmetic_tree[2])
-        return operations[operation](left_expression, right_expression)
+        return operation(left_expression, right_expression)
 
 
 operations = {
     '+': op.add,
     '*': op.mul,
-    '/': op.div
+    '/': lambda a,b: a / b  # `op.div` is not influenced by `from __future__ import division`
 }
 
 
@@ -110,12 +112,7 @@ def tests():
     ]
 
     for case in cases:
-        print case
-        # rw = rewrite(tokenize(case))
-        # print rw
-        # print parse(rw)[1]
-        # print eval(case)
-        # print
+        print case, '=', evaluate_arithmetic(case)
         assert evaluate_arithmetic(case) == eval(case)
 
     print
