@@ -1,4 +1,4 @@
-# from __future__ import division
+from __future__ import division
 import re
 import operator as op
 
@@ -36,7 +36,7 @@ def rewrite(tokens):
 
 rewrite_rules = {
     '-': ('+', -1, '*'),
-    '/': ('*', 1, '/')
+    '/': ('*', 1.0, '/')
 }
 
 
@@ -71,9 +71,9 @@ def parse_term(tokens, i=0):
 
 
 def evaluate(arithmetic_tree):
-    assert isinstance(arithmetic_tree, int) or (isinstance(arithmetic_tree, tuple) and len(arithmetic_tree) in (1, 3)), arithmetic_tree
+    assert isinstance(arithmetic_tree, (int, float)) or (isinstance(arithmetic_tree, tuple) and len(arithmetic_tree) in (1, 3)), arithmetic_tree
 
-    if isinstance(arithmetic_tree, int):
+    if isinstance(arithmetic_tree, (int, float)):
         return arithmetic_tree
     elif len(arithmetic_tree) == 1:
         return evaluate(arithmetic_tree[0])
@@ -86,7 +86,7 @@ def evaluate(arithmetic_tree):
 
 operations = {
     '+': op.add,
-    '*': op.sub,
+    '*': op.mul,
     '/': op.div
 }
 
@@ -94,9 +94,17 @@ operations = {
 ### Testing
 
 def tests():
-    case = '4 / 2 * 3 + 4 - 6'
-    print case
-    assert evaluate_arithmetic(case) == eval(case)
+    cases = [
+        '4 / 2 * 3 + 4 - 6',
+        '2-2',
+    ]
+
+    for case in cases:
+        print case
+        # print evaluate_arithmetic(case), parse(rewrite(tokenize(case)))[1]
+        # print eval(case)
+        # print
+        assert evaluate_arithmetic(case) == eval(case)
 
     print 'Tests pass!'
 
