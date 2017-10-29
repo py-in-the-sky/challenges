@@ -43,7 +43,7 @@ rewrite_rules = {
 def parse(tokens, i=0):
     i, left_term = parse_term(tokens, i)
 
-    if i == len(tokens):
+    if i == len(tokens) or tokens[i] == ')':
         return i, left_term
 
     assert tokens[i] == '+'
@@ -53,21 +53,28 @@ def parse(tokens, i=0):
 
 
 def parse_term(tokens, i=0):
-    left_expression = tokens[i]
-    i += 1
+    i, left_expression = parse_factor(tokens, i)
 
     if i < len(tokens) and tokens[i] == '/':
-        i += 1
-        left_expression = (left_expression, '/', tokens[i])
-        i += 1
+        i, denominator_expression = parse_factor(tokens, i+1)
+        left_expression = (left_expression, '/', denominator_expression)
 
-    if i == len(tokens) or tokens[i] == '+':
+    if i == len(tokens) or tokens[i] in '+)':
         return i, left_expression
 
     assert tokens[i] == '*'
 
     i, remaining_term = parse_term(tokens, i+1)
     return i, (left_expression, '*', remaining_term)
+
+
+def parse_factor(tokens, i=0):
+    if tokens[i] == '(':
+        i, factor = parse(tokens, i+1)
+        assert tokens[i] == ')'
+        return i+1, factor
+    else:
+        return i+1, tokens[i]
 
 
 def evaluate(arithmetic_tree):
@@ -97,15 +104,21 @@ def tests():
     cases = [
         '4 / 2 * 3 + 4 - 6',
         '2-2',
+        '4 / 2 * (3 + 4) - 6',
+        '-23 / ((4 - 6) * (20 + 202 - 8) / 4) * 34 - 908',
+        '(2)',
     ]
 
     for case in cases:
         print case
-        # print evaluate_arithmetic(case), parse(rewrite(tokenize(case)))[1]
+        # rw = rewrite(tokenize(case))
+        # print rw
+        # print parse(rw)[1]
         # print eval(case)
         # print
         assert evaluate_arithmetic(case) == eval(case)
 
+    print
     print 'Tests pass!'
 
 
