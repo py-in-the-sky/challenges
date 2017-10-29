@@ -168,14 +168,14 @@ def test():
     for phone_number,encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
         actual_outputs[phone_number].append(encoding)
 
-    print len(expected_outputs), len(actual_outputs)
+    # print len(expected_outputs), len(actual_outputs)
 
-    for ph,encs in actual_outputs.iteritems():
-        if ph not in expected_outputs:
-            for enc in encs:
-                print '{}: {}'.format(ph, enc)
+    # for ph,encs in actual_outputs.iteritems():
+    #     if ph not in expected_outputs:
+    #         for enc in encs:
+    #             print '{}: {}'.format(ph, enc)
 
-    # assert expected_outputs == actual_outputs
+    assert expected_outputs == actual_outputs
 
     print 'Test passes!'
 
