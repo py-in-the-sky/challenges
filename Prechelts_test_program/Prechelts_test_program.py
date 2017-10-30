@@ -59,7 +59,7 @@ e | j n q | r w x | d s y | f t | a m | c i v | b k u | l o p | g h z
 
 ### Top-level
 
-@profile
+# @profile
 def main():
     for phone_number,encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
         print '{}: {}'.format(phone_number, encoding)
@@ -176,36 +176,24 @@ def file_lines(filename):
 
 
 def test():
-    expected_outputs = defaultdict(list)
-    for line in file_lines(EXPECTED_OUTPUTS_FILE):
-        phone_number, encoding = line.split(':')
-        expected_outputs[phone_number.strip()].append(encoding.strip())
+    expected_outputs = (line.split(':') for line in file_lines(EXPECTED_OUTPUTS_FILE))
+    expected_outputs = set((phone_number.strip(), encoding.strip())
+                           for phone_number,encoding in expected_outputs)
 
-
-    actual_outputs = defaultdict(list)
-    for phone_number,encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
-        actual_outputs[phone_number].append(encoding)
-
-    # print len(expected_outputs), len(actual_outputs)
-
-    # for ph,encs in actual_outputs.iteritems():
-    #     if ph not in expected_outputs:
-    #         for enc in encs:
-    #             print '{}: {}'.format(ph, enc)
+    actual_outputs = set(all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)))
 
     # Some actual outputs don't appear in the expected outputs, but the missing actual outputs
     # all seem to obey the encoding rules in the problem statement.
-    for ph,encs in expected_outputs.iteritems():
-        assert ph in actual_outputs
-
-        for enc in encs:
-            assert enc in actual_outputs[ph]
-
     # assert expected_outputs == actual_outputs
+    assert expected_outputs < actual_outputs
+
+    # print len(actual_outputs - expected_outputs)
+    # for phone_number,encoding in (actual_outputs - expected_outputs):
+    #     print '{}: {}'.format(phone_number, encoding)
 
     print 'Test passes!'
 
 
 if __name__ == '__main__':
-    main()
-    # test()
+    # main()
+    test()
