@@ -3,7 +3,7 @@ See: http://norvig.com/java-lisp.html
 Problem statement: http://www.flownet.com/ron/papers/lisp-java/instructions.html
 Other files: http://www.flownet.com/ron/papers/lisp-java/
 
-Completed in five sessions, for a total of two hours and 38 minutes.
+Completed in six sessions, for a total of two hours and 58 minutes.
 
     Start: 10:50am
     End: 12:26pm
@@ -17,6 +17,8 @@ Completed in five sessions, for a total of two hours and 38 minutes.
     End: 2:55pm
 
     10 min
+
+    20 min
 
 Design notes:
 
@@ -90,10 +92,11 @@ def phone_encodings(phone_number, digits_to_words):
     if not phone_number:
         return ()
 
-    def _phone_encodings(phone_number, can_skip_first_digit=True):
+    def _phone_encodings(phone_number, can_prepend_first_digit=True):
         if not phone_number:
             return [()]
 
+        prefix_word_found = False
         result = []
 
         for prefix,suffix in partitions(phone_number):
@@ -105,11 +108,14 @@ def phone_encodings(phone_number, digits_to_words):
             # (searching over all partitions of suffix), we choose to first check whether prefix maps
             # to any words and if not, then short-circuit the search for encodings.
             if prefix_words:
+                prefix_word_found = True
                 for suffix_encoding in _phone_encodings(suffix):
                     for word in prefix_words:
                         result.append((word,) + suffix_encoding)
 
-        if result or not can_skip_first_digit:
+        # Can prepend a digit it no word can be found for any prefix of phone_number and
+        # a digit hasn't just been prepended.
+        if prefix_word_found or not can_prepend_first_digit:
             return result
         else:
             first_digit, remaining_number = phone_number[0], phone_number[1:]
@@ -182,14 +188,7 @@ def test():
 
     actual_outputs = set(all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)))
 
-    # Some actual outputs don't appear in the expected outputs, but the missing actual outputs
-    # all seem to obey the encoding rules in the problem statement.
-    # assert expected_outputs == actual_outputs
-    assert expected_outputs < actual_outputs
-
-    # print len(actual_outputs - expected_outputs)
-    # for phone_number,encoding in (actual_outputs - expected_outputs):
-    #     print '{}: {}'.format(phone_number, encoding)
+    assert expected_outputs == actual_outputs
 
     print 'Test passes!'
 
