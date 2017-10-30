@@ -5,26 +5,36 @@ Other files: http://www.flownet.com/ron/papers/lisp-java/
 
 Completed in five sessions, for a total of two hours and 38 minutes.
 
-Start: 10:50am
-End: 12:26pm
+    Start: 10:50am
+    End: 12:26pm
 
-Start: 1:20pm
-End: 1:42pm
+    Start: 1:20pm
+    End: 1:42pm
 
-5 min
+    5 min
 
-Start: 2:30pm
-End: 2:55pm
+    Start: 2:30pm
+    End: 2:55pm
 
-10 min
+    10 min
 
 Design notes:
 
-* In RAW_LETTER_TO_DIGIT_MAPPING, there's a one-to-one mapping between a
-  letter's lower-case and upper-case forms. Therefore, we need only pay
-  attention to one of the cases when searching for phone-number encodings.
-  We will choose to pay attention to the lower-case letters. However, when
-  we print a word, it must appear exactly as it does in the given dictionary.
+    * In RAW_LETTER_TO_DIGIT_MAPPING, there's a one-to-one mapping between a
+      letter's lower-case and upper-case forms. Therefore, we need only pay
+      attention to one of the cases when searching for phone-number encodings.
+      We will choose to pay attention to the lower-case letters. However, when
+      we print a word, it must appear exactly as it does in the given dictionary.
+
+Results:
+
+    * Performed memory profiling with memory_profiler.
+    * Using `python -m memory_profiler Prechelts_test_program.py`, found that
+      37 MB were consumed when the `main` function was run. However, the delta
+      between the beginning and end of running the `main` function was 26 MB.
+    * Using `python -m cProfile Prechelts_test_program.py` on a Macbook pro with
+      2.5 GHz Intel Core i5 processor and 8 GB 1600 MHz DDR3 memory, found the
+      runtime to be 1.126 seconds.
 """
 
 
@@ -49,11 +59,13 @@ e | j n q | r w x | d s y | f t | a m | c i v | b k u | l o p | g h z
 
 ### Top-level
 
+@profile
 def main():
-    for phone_number,encoding in all_encodings(file_lines(SAMPLE_PHONE_NUMBER_FILENAME), file_lines(SAMPLE_DICTIONARY_FILENAME)):
+    for phone_number,encoding in all_encodings(file_lines(PHONE_NUMBER_FILENAME), file_lines(DICTIONARY_FILENAME)):
         print '{}: {}'.format(phone_number, encoding)
 
 
+# @profile
 def all_encodings(phone_numbers, dictionary_words):
     """
     Returns all pairings of phone number and valid encoding, given words in a dictionary. See problem statement
@@ -68,6 +80,7 @@ def all_encodings(phone_numbers, dictionary_words):
             yield phone_number, ' '.join(encoding)
 
 
+# @profile
 def phone_encodings(phone_number, digits_to_words):
     """
     Returns all valid encodings of phone_number, given a mapping of digit sequences to words that
@@ -86,6 +99,11 @@ def phone_encodings(phone_number, digits_to_words):
         for prefix,suffix in partitions(phone_number):
             prefix_words = digits_to_words.get(prefix)
 
+            # Key choice for performance. If the prefix maps to no words or suffix has no encoding,
+            # then the whole word has no encoding. Because checking whether prefix maps to any words
+            # (just a hash-table lookup) is cheaper than checking whether suffix has any encodings
+            # (searching over all partitions of suffix), we choose to first check whether prefix maps
+            # to any words and if not, then short-circuit the search for encodings.
             if prefix_words:
                 for suffix_encoding in _phone_encodings(suffix):
                     for word in prefix_words:
@@ -189,5 +207,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # main()
-    test()
+    main()
+    # test()
