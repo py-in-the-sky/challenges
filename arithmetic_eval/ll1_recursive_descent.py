@@ -107,17 +107,18 @@ def parse_term(tokens, i=0, take_reciprocal_of_first_factor=False):
 
 
 def parse_factor(tokens, i=0):
-    if tokens[i] in tuple('+-'):
-        t = tokens[i]
-        i, factor = parse_factor(tokens, i+1)
-        return i, (1 if t == '+' else -1, '*', factor)
-    elif tokens[i] == '(':
+    if isinstance(tokens[i], int):
+        return i+1, tokens[i]
+    elif tokens[i] == '+':  # '+' as unary operator
+        return parse_factor(tokens, i+1)
+    elif tokens[i] == '-':  # '-' as unary operator
+        i, factor = parse_factor(tokens, i + 1)
+        return i, (-1, '*', factor)
+    else:
+        assert tokens[i] == '('
         i, factor = parse_integer_arithmetic(tokens, i+1)
         assert tokens[i] == ')'
         return i+1, factor
-    else:
-        assert isinstance(tokens[i], int)
-        return i+1, tokens[i]
 
 
 ### Evaluate
@@ -150,41 +151,43 @@ import random
 
 
 COIN = HEADS, TAILS = True, False
+coin_flip = lambda: random.choice(COIN)
+
 BINARY_OPERATORS = '+-*/'
 UNARY_OPERATORS = '+-'
-EXPRESSION_TYPES = INT, PARENTHETIC, UNARY = ('int', 'parenthetic', 'unary')
+EXPRESSION_TYPES = INT, PARENTHETIC, UNARY = (1, 2, 3)
 
 
 def generate_integer_arithmetic(recursion_depth=0):
-    expr1 = generate_expression(recursion_depth+1)
+    factor = generate_factor(recursion_depth+1)
 
-    if recursion_depth < 10 and flip_coin() is HEADS:
+    # We don't need separate functions for generating terms and factors,
+    # so just choose any binary operator; no need to limit the choice to
+    # just '+-' or '*/'.
+
+    if recursion_depth < 10 and coin_flip() is HEADS:
         binary_operator = random.choice(BINARY_OPERATORS)
-        expr2 = generate_integer_arithmetic(recursion_depth+1)
-        return ' '.join([expr1, binary_operator, expr2])
+        int_arithmetic = generate_integer_arithmetic(recursion_depth+1)
+        return ' '.join([factor, binary_operator, int_arithmetic])
     else:
-        return expr1
+        return factor
 
 
-def generate_expression(recursion_depth):
+def generate_factor(recursion_depth):
     expression_type = random.choice(EXPRESSION_TYPES)
 
-    if expression_type is INT:
-        return generate_int()
+    if expression_type is INT or recursion_depth > 9:
+        return generate_integer()
     elif expression_type is PARENTHETIC:
         return '(' + generate_integer_arithmetic(recursion_depth+1) + ')'
-    else:
-        return random.choice(UNARY_OPERATORS) + generate_expression(recursion_depth+1)
+    else:  # UNARY
+        return random.choice(UNARY_OPERATORS) + generate_factor(recursion_depth+1)
 
 
-def generate_int():
+def generate_integer():
     first_digit = random.choice('123456789')
     random_digit = lambda: random.choice('0123456789')
-    return first_digit + ''.join(random_digit() for _ in xrange(random.randint(0, 5)))
-
-
-def flip_coin():
-    return random.choice(COIN)
+    return first_digit + ''.join(random_digit() for _ in xrange(random.randint(0, 9)))
 
 
 def tests():
@@ -209,14 +212,15 @@ def tests():
 
     for case in random_cases + hard_coded_cases:
         try:
-            # print
-            # Why use `str` for the actual and expected evaluations? Due to rounding errors,
+            print
+            # Why use `str` on the actual and expected evaluations? Due to rounding errors,
             # my evaluator's answers diverge from Python's with very large and very small
             # numbers. `str` rounds both large and small numbers, using scientific notation.
-            # We use `str` as a sort of rounding function.
+            # Therefore, we use `str` as a rounding function for both very large and very
+            # small numbers.
             actual_eval = str(evaluate_arithmetic(case))
             expected_eval = str(eval(case))
-            # print case, '=', actual_eval, '(actual)', '=', expected_eval, '(expected)'
+            print case, '=', actual_eval, '(actual)', '=', expected_eval, '(expected)'
             assert actual_eval == expected_eval
         except ZeroDivisionError:
             pass
