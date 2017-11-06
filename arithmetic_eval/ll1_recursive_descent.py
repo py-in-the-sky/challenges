@@ -17,6 +17,8 @@ Grammar
 
 TODOs:
     * nice invalid-expression error/message, as in the very simple JSON parser
+    * comment on how parsing results in a binary arithmetic tree that leads to
+      left-to-right evaluation of the terms/factors
     * post as a gist
 """
 
@@ -205,21 +207,14 @@ def tests():
         '1 -1',
         '1-1',
         '4*3-1*5*5/5',
-        # '4032 / 7040083',  # Results in: 0.000572720520483 (actual) != 0.000572720520482 (expected)
+        '4032 / 7040083',
     ]
-
-    rounding_function = str
-    # Why use `str` on the actual and expected evaluations? Due to rounding errors,
-    # my evaluator's answers diverge from Python's with very large and very small
-    # numbers. `str` rounds both large and small numbers, using scientific notation.
-    # Therefore, we use `str` as a rounding function for both very large and very
-    # small numbers.
 
     for case in random_cases + hard_coded_cases:
         try:
             print
-            actual_eval = rounding_function(evaluate_arithmetic(case))
-            expected_eval = rounding_function(eval(case))
+            actual_eval = evaluate_arithmetic(case)
+            expected_eval = eval(case)
             print case, '=', actual_eval, '(actual)', '=', expected_eval, '(expected)'
             assert actual_eval == expected_eval
         except ZeroDivisionError:
