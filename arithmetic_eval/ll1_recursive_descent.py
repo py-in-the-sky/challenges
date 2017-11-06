@@ -27,14 +27,13 @@ import re
 
 
 ### Top-level
+# For readability of this file, we define `evaluate_arithmetic` at the top of the file,
+# but doing so requires us to dynamically create `compose(evaluate, parse, tokenize)`
+# every time `evaluate_arithmetic` is called. We could define `evaluate_arithmetic` at the
+# bottom of the file by simply doing: `evaluate_arithmetic = compose(tokenize, parse, evaluate)`.
 
 def evaluate_arithmetic(arithmetic_expression):
     return compose(tokenize, parse, evaluate)(arithmetic_expression)
-    # For readability of this file, we define `evaluate_arithmetic` at the top of the file,
-    # but doing so requires us to dynamically create `compose(evaluate, parse, tokenize)`
-    # every time `evaluate_arithmetic` is called. We could define `evaluate_arithmetic` at the
-    # bottom of the file by simply doing:
-    # `evaluate_arithmetic = compose(tokenize, parse, evaluate)`.
 
 
 ### Util
@@ -207,23 +206,26 @@ def tests():
         '-(1 + 1) + -(1 + 1)',
         '1 -1',
         '1-1',
-        '4*3-1*5*5/5'
+        '4*3-1*5*5/5',
+        # '4032 / 7040083',  # Results in: 0.000572720520483 (actual) != 0.000572720520482 (expected)
     ]
+
+    rounding_function = str
+    # Why use `str` on the actual and expected evaluations? Due to rounding errors,
+    # my evaluator's answers diverge from Python's with very large and very small
+    # numbers. `str` rounds both large and small numbers, using scientific notation.
+    # Therefore, we use `str` as a rounding function for both very large and very
+    # small numbers.
 
     for case in random_cases + hard_coded_cases:
         try:
             print
-            # Why use `str` on the actual and expected evaluations? Due to rounding errors,
-            # my evaluator's answers diverge from Python's with very large and very small
-            # numbers. `str` rounds both large and small numbers, using scientific notation.
-            # Therefore, we use `str` as a rounding function for both very large and very
-            # small numbers.
-            actual_eval = str(evaluate_arithmetic(case))
-            expected_eval = str(eval(case))
+            actual_eval = rounding_function(evaluate_arithmetic(case))
+            expected_eval = rounding_function(eval(case))
             print case, '=', actual_eval, '(actual)', '=', expected_eval, '(expected)'
             assert actual_eval == expected_eval
         except ZeroDivisionError:
-            pass
+            print 'Division by zero in random case: {}'.format(case)
 
     print
     print 'Tests pass!'
