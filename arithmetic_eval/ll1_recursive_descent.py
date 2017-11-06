@@ -23,7 +23,7 @@ TODOs:
 """
 
 
-from __future__ import division
+from __future__ import division  # Also works when this import is commented out.
 import operator as op
 import re
 
