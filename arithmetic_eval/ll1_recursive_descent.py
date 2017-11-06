@@ -106,12 +106,12 @@ def parse_term(tokens, i=0, left_expression=None):
 
 
 def parse_factor(tokens, i=0, positive=True):
-    if isinstance(tokens[i], int):
-        return i+1, tokens[i] if positive else -tokens[i]
-    elif tokens[i] == '+':  # '+' as unary operator
+    if tokens[i] == '+':  # '+' as unary operator
         return parse_factor(tokens, i+1, positive)
     elif tokens[i] == '-':  # '-' as unary operator
         return parse_factor(tokens, i+1, not positive)
+    elif isinstance(tokens[i], int):
+        return i+1, tokens[i] if positive else -tokens[i]
     else:
         assert tokens[i] == '('
         i, factor = parse_integer_arithmetic(tokens, i+1)
