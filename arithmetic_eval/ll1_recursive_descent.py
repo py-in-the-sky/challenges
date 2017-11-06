@@ -75,55 +75,53 @@ def parse(tokens):
     return parse_integer_arithmetic(tokens)[1]
 
 
-def parse_integer_arithmetic(tokens, i=0, negate_first_term=False):
-    i, left_term = parse_term(tokens, i)
-
-    if negate_first_term:
-        left_term = (-1, '*', left_term)
-
-    if i == len(tokens) or tokens[i] == ')':
-        return i, left_term
-
-    assert tokens[i] in '+-'
-
-    i, remaining_expression = parse_integer_arithmetic(tokens, i+1, tokens[i] == '-')
-    return i, (left_term, '+', remaining_expression)
-
-
-def parse_term(tokens, i=0, take_reciprocal_of_first_factor=False):
-    i, left_term = parse_factor(tokens, i)
-
-    if take_reciprocal_of_first_factor:
-        left_term = (1, '/', left_term)
-
-    if i == len(tokens) or tokens[i] in '+-)':
-        return i, left_term
-
-    assert tokens[i] in '*/'
-
-    i, remaining_term = parse_term(tokens, i+1, tokens[i] == '/')
-    return i, (left_term, '*', remaining_term)
+def parse_integer_arithmetic(tokens, i=0, left_expression=None):
+    if left_expression is None:  # very beginning
+        i, int_arithmetic = parse_term(tokens, i)
+        return parse_integer_arithmetic(tokens, i, int_arithmetic)
+    elif i == len(tokens) or tokens[i] == ')':  # very end
+        return i, left_expression
+    else:  # middle
+        assert tokens[i] in '+-'
+        operator = tokens[i]
+        i, next_term = parse_term(tokens, i+1)
+        int_arithmetic = (left_expression, operator, next_term)
+        return parse_integer_arithmetic(tokens, i, int_arithmetic)
 
 
-def parse_factor(tokens, i=0):
+def parse_term(tokens, i=0, left_expression=None):
+    if left_expression is None:  # very beginning
+        i, term = parse_factor(tokens, i)
+        return parse_term(tokens, i, term)
+    elif i == len(tokens) or tokens[i] in '+-)':  # very end
+        return i, left_expression
+    else:  # middle
+        assert tokens[i] in '*/' and left_expression is not None
+        operator = tokens[i]
+        i, next_factor = parse_factor(tokens, i+1)
+        term = (left_expression, operator, next_factor)
+        return parse_term(tokens, i, term)
+
+
+def parse_factor(tokens, i=0, positive=True):
     if isinstance(tokens[i], int):
-        return i+1, tokens[i]
+        return i+1, tokens[i] if positive else -tokens[i]
     elif tokens[i] == '+':  # '+' as unary operator
-        return parse_factor(tokens, i+1)
+        return parse_factor(tokens, i+1, positive)
     elif tokens[i] == '-':  # '-' as unary operator
-        i, factor = parse_factor(tokens, i + 1)
-        return i, (-1, '*', factor)
+        return parse_factor(tokens, i+1, not positive)
     else:
         assert tokens[i] == '('
         i, factor = parse_integer_arithmetic(tokens, i+1)
         assert tokens[i] == ')'
-        return i+1, factor
+        return i+1, factor if positive else (-1, '*', factor)
 
 
 ### Evaluate
 
 OPERATIONS = {
     '+': op.add,
+    '-': op.sub,
     '*': op.mul,
     '/': lambda a,b: a / b  # `op.div` is not influenced by `from __future__ import division`
 }
