@@ -78,7 +78,7 @@ def parse(tokens):
 
 
 def parse_integer_arithmetic(tokens, i=0, left_expression=None):
-    if left_expression is None:  # very beginning
+    if left_expression is None:  # very beginning of integer-arithmetic expression
         i, int_arithmetic = parse_term(tokens, i)
         return parse_integer_arithmetic(tokens, i, int_arithmetic)
     elif i == len(tokens) or tokens[i] == ')':  # very end
@@ -92,7 +92,7 @@ def parse_integer_arithmetic(tokens, i=0, left_expression=None):
 
 
 def parse_term(tokens, i=0, left_expression=None):
-    if left_expression is None:  # very beginning
+    if left_expression is None:  # very beginning of term
         i, term = parse_factor(tokens, i)
         return parse_term(tokens, i, term)
     elif i == len(tokens) or tokens[i] in '+-)':  # very end
@@ -208,6 +208,8 @@ def tests():
         '1-1',
         '4*3-1*5*5/5',
         '4032 / 7040083',
+        # '()',
+        # '(4 + ())',
     ]
 
     for case in random_cases + hard_coded_cases:
