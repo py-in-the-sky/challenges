@@ -1,11 +1,19 @@
 """
 Very Simple Integer-arithmetic Evaluator
 
-Two simplifications: integers are the only type of number in the inputs,
-and the exponential operation is not supported. It is left as an exercise
-to the reader to add support for floats and the exponential operation.
 
-Grammar
+This code is an exercise in parsing arithmetic into a binary expression tree
+(https://en.wikipedia.org/wiki/Binary_expression_tree) and then recursively
+evaluating that tree. In the evaluation of the tree, this code hands off each
+binary arithmetic operation to the built-in operators (+, -, *, and /) in Python.
+If you're looking for how to implement the binary operators, you won't find the
+answer in this code. If you're curious about binary expression trees and parsing
+context-free languages, then hopefully this will be useful.
+
+Also see a very simple JSON parser: https://gist.github.com/py-in-the-sky/02d18c427c07658adf0261a572e442d9
+
+
+Grammar of Integer Arithmetic:
 
     integer-arithmetic:  term | term plus-or-minus integer-arithmetic
     term:                factor | factor times-or-divide term
@@ -15,11 +23,33 @@ Grammar
     times-or-divide:     * | /
     integer:             \d+
 
-TODOs:
-    * nice invalid-expression error/message, as in the very simple JSON parser
-    * comment on how parsing results in a binary arithmetic tree that leads to
-      left-to-right evaluation of the terms/factors
-    * post as a gist
+
+Two simplifications in this arithmetic: integers are the only type of number, and
+the exponent operator is not supported.
+
+
+Exercises for the reader:
+
+1. Change the code to handle floats, in addition to integers.
+2. Change the code to handle the exponent '**' binary operator.
+3. Read the code and convince yourself that it operates on binary expressions
+from left to right while obeying PEMDAS (https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics).
+    E.g.: 1 + 2 * 3 + 4 => 1 + 6 + 4 => 7 + 4 => 11
+    E.g.: 2 * 3 + 1 * 1 + 5 * (9 + 2 * 5) => 6 + 1 * 1 + 5 * (9 + 2 * 5) => 6 + 1 + 5 * (9 + 2 * 5)
+            => 7 + 5 * (9 + 2 * 5) => 7 + 5 * (9 + 10) => 7 + 5 * 19 => 7 + 95 => 102
+4. Develop nice validation/error messages, like those in
+https://gist.github.com/py-in-the-sky/02d18c427c07658adf0261a572e442d9
+5. Debugging tool: develop a `pretty_print` function to print a binary expression tree. E.g.:
+
+    pretty_print(parse('(1 + 2) * 3 + 4'))
+
+                        +
+                    /       \
+                    *       4
+                /       \
+                +       3
+            /       \
+            1       2
 """
 
 
@@ -129,18 +159,18 @@ OPERATIONS = {
 }
 
 
-def evaluate(arithmetic_tree):
-    if isinstance(arithmetic_tree, int):
-        return arithmetic_tree
+def evaluate(binary_expression_tree):
+    if isinstance(binary_expression_tree, int):
+        return binary_expression_tree
 
-    assert isinstance(arithmetic_tree, tuple) and len(arithmetic_tree) in (1, 3)
+    assert isinstance(binary_expression_tree, tuple) and len(binary_expression_tree) in (1, 3)
 
-    if len(arithmetic_tree) == 1:
-        return evaluate(arithmetic_tree[0])
+    if len(binary_expression_tree) == 1:
+        return evaluate(binary_expression_tree[0])
     else:
-        left_expression = evaluate(arithmetic_tree[0])
-        operation = OPERATIONS[arithmetic_tree[1]]
-        right_expression = evaluate(arithmetic_tree[2])
+        left_expression = evaluate(binary_expression_tree[0])
+        operation = OPERATIONS[binary_expression_tree[1]]
+        right_expression = evaluate(binary_expression_tree[2])
         return operation(left_expression, right_expression)
 
 
@@ -208,8 +238,6 @@ def tests():
         '1-1',
         '4*3-1*5*5/5',
         '4032 / 7040083',
-        # '()',
-        # '(4 + ())',
     ]
 
     for case in random_cases + hard_coded_cases:
