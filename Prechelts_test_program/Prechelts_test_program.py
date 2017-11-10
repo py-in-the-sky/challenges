@@ -113,7 +113,7 @@ def phone_encodings(phone_number, digits_to_words):
                     for word in prefix_words:
                         result.append((word,) + suffix_encoding)
 
-        # Can prepend a digit it no word can be found for any prefix of phone_number and
+        # Can prepend a digit if no word can be found for any prefix of phone_number and
         # a digit hasn't just been prepended.
         if prefix_word_found or not can_prepend_first_digit:
             return result
